@@ -44,3 +44,64 @@ Plugins/*/Intermediate/
 Thumbs.db
 *.swp
 *~
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code (keep settings but ignore workspace state)
+.vscode/.history
+.vscode/*.log
+
+# macOS
+*.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+desktop.ini
+ehthumbs.db
+ehthumbs_vista.db
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Profiler data
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Generated documentation
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Package manager directories
+node_modules/
+bower_components/
+
+# Test coverage
+coverage/
+*.coverage
+.nyc_output/
+
+# Environment files
+.env
+.env.local
+.env.*.local

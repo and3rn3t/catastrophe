@@ -1,0 +1,63 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build Catastrophe (Development Editor)",
+			"type": "shell",
+			"command": "msbuild",
+			"args": [
+				"Catastrophe.sln",
+				"/p:Configuration=\"Development Editor\"",
+				"/p:Platform=Win64",
+				"/m"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": "$msCompile",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "Clean Catastrophe",
+			"type": "shell",
+			"command": "msbuild",
+			"args": [
+				"Catastrophe.sln",
+				"/t:Clean"
+			],
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "Generate Project Files",
+			"type": "shell",
+			"windows": {
+				"command": "${env:UE5_DIR}\\Engine\\Build\\BatchFiles\\Build.bat",
+				"args": [
+					"-projectfiles",
+					"-project=\"${workspaceFolder}\\Catastrophe.uproject\"",
+					"-game",
+					"-rocket",
+					"-progress"
+				]
+			},
+			"linux": {
+				"command": "${env:HOME}/UnrealEngine/Engine/Build/BatchFiles/Linux/GenerateProjectFiles.sh",
+				"args": [
+					"-project=\"${workspaceFolder}/Catastrophe.uproject\"",
+					"-game",
+					"-engine"
+				]
+			},
+			"problemMatcher": []
+		}
+	]
+}

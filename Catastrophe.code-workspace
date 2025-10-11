@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.vs": true,
+			"**/Binaries": true,
+			"**/DerivedDataCache": true,
+			"**/Intermediate": true,
+			"**/Saved": true,
+			"**/*.sln": true,
+			"**/*.suo": true,
+			"**/*.xcodeproj": true,
+			"**/*.xcworkspace": true
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-vscode.cpptools-extension-pack",
+			"editorconfig.editorconfig",
+			"xaver.clang-format",
+			"eamodio.gitlens"
+		]
+	}
+}

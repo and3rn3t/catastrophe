@@ -1,0 +1,37 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Unreal Editor (Windows)",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${env:UE5_DIR}/Engine/Binaries/Win64/UnrealEditor.exe",
+			"args": [
+				"${workspaceFolder}/Catastrophe.uproject"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"console": "externalTerminal"
+		},
+		{
+			"name": "Launch Unreal Editor (Linux)",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${env:HOME}/UnrealEngine/Engine/Binaries/Linux/UnrealEditor",
+			"args": [
+				"${workspaceFolder}/Catastrophe.uproject"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"MIMode": "gdb"
+		},
+		{
+			"name": "Attach to Unreal Editor",
+			"type": "cppvsdbg",
+			"request": "attach",
+			"processId": "${command:pickProcess}"
+		}
+	]
+}
