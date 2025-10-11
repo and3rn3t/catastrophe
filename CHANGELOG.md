@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Development tools and configurations
   - EditorConfig for consistent code formatting
   - Clang-Format for C++ code formatting standards
@@ -21,9 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file
 
 ### Changed
+
 - Enhanced .gitignore with additional IDE and OS-specific entries
 
 ### Infrastructure
+
 - Code quality automation with GitHub Actions
 - Spell checking and markdown linting
 - Automated PR validation
@@ -31,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - Initial Setup
 
 ### Added
+
 - Core C++ classes
   - ACatCharacter - Main player character
   - AHumanNPC - AI human NPCs

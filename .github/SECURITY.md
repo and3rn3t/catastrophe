@@ -12,7 +12,8 @@ Currently, Catastrophe is in active development. Security updates will be applie
 
 ## Reporting a Vulnerability
 
-We take the security of Catastrophe seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of Catastrophe seriously. If you believe you have found a security vulnerability,
+please report it to us as described below.
 
 ### How to Report
 
@@ -62,22 +63,26 @@ Please include the following information in your report:
 When contributing to Catastrophe, please follow these security best practices:
 
 ### Code Security
+
 - Never commit credentials, API keys, or secrets to the repository
 - Validate all user inputs in your code
 - Use Unreal Engine's built-in security features
 - Follow secure coding practices from Unreal Engine documentation
 
 ### Dependencies
+
 - Keep Unreal Engine and plugins up to date
 - Review dependencies for known vulnerabilities
 - Only use trusted third-party plugins and assets
 
 ### Access Control
+
 - Use strong passwords and 2FA on your GitHub account
 - Don't share credentials or access tokens
 - Be cautious with file permissions
 
 ### Testing
+
 - Test your code for potential security issues
 - Consider edge cases and error conditions
 - Report any security concerns you discover
@@ -91,12 +96,14 @@ When contributing to Catastrophe, please follow these security best practices:
 ## Scope
 
 This security policy applies to:
+
 - The Catastrophe game source code
 - Build scripts and tools
 - Documentation and examples
 - GitHub Actions workflows
 
 This policy does NOT apply to:
+
 - Third-party Unreal Engine plugins (report to their maintainers)
 - Unreal Engine itself (report to Epic Games)
 - Third-party assets and content

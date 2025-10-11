@@ -32,31 +32,35 @@ Related to #
 ## Changes Made
 <!-- Provide a bullet list of the specific changes -->
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing Checklist
 <!-- Mark completed items with an "x" -->
 
 ### Build & Compile
+
 - [ ] Project builds successfully in Development Editor configuration
 - [ ] No new compiler warnings introduced
 - [ ] Code follows Unreal Engine C++ coding standards
 
 ### Functionality Testing
+
 - [ ] Changes tested in Unreal Editor (PIE - Play In Editor)
 - [ ] No new console errors or warnings
 - [ ] Existing features still work as expected
 - [ ] New features work as intended
 
 ### Code Quality
+
 - [ ] Code is properly commented where necessary
 - [ ] Variable and function names are descriptive
 - [ ] No debugging code left in (console logs, commented code, etc.)
 - [ ] Followed naming conventions (BP_, M_, T_, SM_, etc. for assets)
 
 ### Core Systems (if modified)
+
 - [ ] Cat movement and controls working
 - [ ] Interaction system functioning
 - [ ] AI behavior not broken
@@ -64,6 +68,7 @@ Related to #
 - [ ] Game over scenarios tested
 
 ### Documentation
+
 - [ ] Updated relevant documentation (README, SETUP, etc.)
 - [ ] Added comments to complex logic
 - [ ] Updated ROADMAP.md if completing a milestone
@@ -73,9 +78,7 @@ Related to #
 
 ### Before
 
-
 ### After
-
 
 ## Additional Context
 <!-- Add any other context about the pull request here -->

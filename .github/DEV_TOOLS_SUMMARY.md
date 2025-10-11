@@ -5,12 +5,14 @@ This document provides a quick reference for all development tools and configura
 ## ✅ Installed Tools & Configurations
 
 ### Code Formatting & Style
+
 - ✅ **`.editorconfig`** - Universal editor configuration for consistent formatting
 - ✅ **`.clang-format`** - C++ code formatting (Unreal Engine style)
 - ✅ **`.markdownlint.json`** - Markdown linting rules
 - ✅ **`.cspell.json`** - Spell checking configuration
 
 ### VS Code Integration
+
 - ✅ **`.vscode/settings.json`** - Workspace settings
 - ✅ **`.vscode/extensions.json`** - Recommended extensions
 - ✅ **`.vscode/tasks.json`** - Build and development tasks
@@ -18,6 +20,7 @@ This document provides a quick reference for all development tools and configura
 - ✅ **`Catastrophe.code-workspace`** - Workspace file
 
 ### GitHub Integration
+
 - ✅ **`.github/workflows/code-quality.yml`** - Code quality checks
 - ✅ **`.github/workflows/pr-validation.yml`** - PR validation
 - ✅ **`.github/PULL_REQUEST_TEMPLATE.md`** - PR template
@@ -27,10 +30,12 @@ This document provides a quick reference for all development tools and configura
 - ✅ **`.github/dependabot.yml`** - Automated dependency updates
 
 ### Version Control
+
 - ✅ **`.gitignore`** - Updated with IDE and OS-specific entries
 - ✅ **`.pre-commit-config.yaml`** - Pre-commit hooks
 
 ### Documentation
+
 - ✅ **`DEV_TOOLS.md`** - Comprehensive development tools guide
 - ✅ **`CHANGELOG.md`** - Project change history
 - ✅ **`LICENSE`** - MIT License
@@ -41,6 +46,7 @@ This document provides a quick reference for all development tools and configura
 ## 🎯 Quick Start Commands
 
 ### First Time Setup
+
 ```bash
 # Clone repository
 git clone https://github.com/and3rn3t/catastrophe.git
@@ -57,6 +63,7 @@ pre-commit install
 ```
 
 ### Development Workflow
+
 ```bash
 # Format code automatically on save (configured in VS Code)
 # Or manually format all C++ files:
@@ -75,6 +82,7 @@ git diff
 ```
 
 ### Code Quality Checks
+
 ```bash
 # Lint Markdown files
 npx markdownlint-cli2 "**/*.md"
@@ -89,55 +97,68 @@ python3 -c "import yaml; yaml.safe_load(open('.github/workflows/code-quality.yml
 ## 📚 What Each Tool Does
 
 ### EditorConfig
+
 - Ensures consistent indentation, line endings, and encoding across all editors
 - Works automatically in VS Code, Visual Studio, Rider, and more
 - No installation needed - supported by most modern editors
 
 ### Clang-Format
+
 - Formats C++ code according to Unreal Engine standards
 - Automatically formats on save in VS Code
 - Can be run manually or via command line
 
 ### VS Code Extensions
+
 **Core Development:**
+
 - C/C++ - IntelliSense, debugging, code navigation
 - C/C++ Extension Pack - Additional C++ tools
 - Clangd - Advanced C++ language server
 
 **Git & GitHub:**
+
 - GitLens - Enhanced Git integration
 - GitHub Pull Requests - PR management in VS Code
 
 **Code Quality:**
+
 - EditorConfig - Respects .editorconfig rules
 - Clang-Format - Code formatting
 - Spell Checker - Catches typos in code and docs
 - TODO Tree - Tracks TODO/FIXME comments
 
 **Documentation:**
+
 - Markdown All in One - Markdown editing tools
 - Markdownlint - Markdown style enforcement
 
 **Other:**
+
 - YAML - YAML file support for workflows
 - Better Comments - Highlighted TODO/FIXME/NOTE comments
 - Unreal Engine - Official UE extension (if available)
 
 ### GitHub Actions Workflows
+
 **Code Quality (`code-quality.yml`):**
+
 - Runs on every push and PR
 - Checks C++ formatting with clang-format
 - Lints Markdown files
 - Performs spell checking
 
 **PR Validation (`pr-validation.yml`):**
+
 - Validates PR title format (conventional commits)
 - Checks for large files (>10MB)
 - Validates branch naming conventions
 - Ensures no merge commits
 
 ### Pre-commit Hooks
+
 Automatically runs before each commit:
+
 - Removes trailing whitespace
 - Fixes end-of-file newlines
 - Validates YAML and JSON
@@ -168,6 +189,7 @@ All configuration files have been validated for syntax correctness.
 ## 🚀 Benefits
 
 ### For Developers
+
 - **Consistent code style** across all contributors
 - **Automated formatting** saves time
 - **Catch errors early** with linting and CI/CD
@@ -175,6 +197,7 @@ All configuration files have been validated for syntax correctness.
 - **Quick setup** with VS Code workspace
 
 ### For the Project
+
 - **Higher code quality** through automation
 - **Easier onboarding** for new contributors
 - **Better documentation** with templates and guides
@@ -182,6 +205,7 @@ All configuration files have been validated for syntax correctness.
 - **Reduced merge conflicts** with consistent formatting
 
 ### For Maintainers
+
 - **Automated reviews** with CODEOWNERS
 - **Security** with vulnerability reporting policy
 - **Dependency management** with Dependabot
@@ -198,6 +222,7 @@ All configuration files have been validated for syntax correctness.
 ## ✨ What's New
 
 ### Latest Additions (October 2025)
+
 - Complete development tooling suite
 - VS Code workspace configuration
 - GitHub Actions CI/CD pipelines
@@ -207,9 +232,10 @@ All configuration files have been validated for syntax correctness.
 - Security policy
 - Change log
 
-## 🎉 You're All Set!
+## 🎉 You're All Set
 
 With these tools configured, you have:
+
 - ✅ Professional development environment
 - ✅ Automated code quality checks
 - ✅ Consistent formatting across editors

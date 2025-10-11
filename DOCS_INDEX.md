@@ -4,7 +4,7 @@ Welcome to CATastrophe! This index helps you navigate all project documentation.
 
 ## 📚 Documentation Structure
 
-```
+```text
 CATastrophe Documentation
 ├─ Getting Started
 │  ├─ README.md           - Project overview & main documentation
@@ -43,23 +43,28 @@ CATastrophe Documentation
 
 ---
 
-## 🎯 I Want To...
+## 🎯 I Want To
 
 ### Learn About the Project
+
 → **Start here:** [README.md](README.md)
+
 - Project overview and features
 - Technology stack
 - Prerequisites and requirements
 - Basic usage instructions
 
 ### Set Up My Development Environment
+
 → **Start here:** [SETUP.md](SETUP.md) or [QUICKSTART.md](QUICKSTART.md)
+
 - Installation instructions
 - Build configuration
 - First-time setup steps
 - Troubleshooting common issues
 
 → **For development tools:** [DEV_TOOLS.md](DEV_TOOLS.md)
+
 - VS Code setup and extensions
 - Code formatting and linting
 - Pre-commit hooks
@@ -67,32 +72,40 @@ CATastrophe Documentation
 - Debugging configuration
 
 ### Understand the Development Plan
+
 → **Start here:** [ROADMAP.md](ROADMAP.md)
+
 - 12-month development timeline
 - Phased milestones and deliverables
 - Feature priorities
 - Success metrics and risk management
 
 → **Quick overview:** [ROADMAP_VISUAL.md](ROADMAP_VISUAL.md)
+
 - Visual timeline
 - Feature summary
 - Quick navigation
 
 ### Contribute to the Project
+
 → **Start here:** [CONTRIBUTING.md](CONTRIBUTING.md)
+
 - Contribution guidelines
 - Code standards and best practices
 - How to submit changes
 - Areas needing help
 
 → **Quick reference:** [QUICKSTART.md](QUICKSTART.md)
+
 - Common commands
 - Development workflow
 - Testing checklist
 - Debugging tips
 
 ### Understand the Visual Design
+
 → **Start here:** [DESIGN.md](DESIGN.md)
+
 - Art direction and style
 - Character design specifications
 - Environment layouts
@@ -103,6 +116,7 @@ CATastrophe Documentation
 ## 📖 Documentation by Role
 
 ### For Programmers
+
 1. [README.md](README.md) - Overview and tech stack
 2. [QUICKSTART.md](QUICKSTART.md) - Development commands and class reference
 3. [DEV_TOOLS.md](DEV_TOOLS.md) - Development tools setup
@@ -110,6 +124,7 @@ CATastrophe Documentation
 5. [ROADMAP.md](ROADMAP.md) - Feature priorities
 
 **Key Sections:**
+
 - C++ coding standards
 - Blueprint best practices
 - Debugging tips
@@ -117,43 +132,51 @@ CATastrophe Documentation
 - CI/CD workflows
 
 ### For Artists & Designers
+
 1. [DESIGN.md](DESIGN.md) - Visual style guide
 2. [CONTRIBUTING.md](CONTRIBUTING.md) - Asset guidelines
 3. [ROADMAP.md](ROADMAP.md) - Content pipeline
 
 **Key Sections:**
+
 - Asset naming conventions
 - Polygon budgets
 - Material specifications
 - Performance targets
 
 ### For Sound Designers
+
 1. [DESIGN.md](DESIGN.md) - Audio-visual integration
 2. [ROADMAP.md](ROADMAP.md) - Audio milestones
 3. [CONTRIBUTING.md](CONTRIBUTING.md) - Audio specifications
 
 **Key Sections:**
+
 - Sound effect requirements
 - Music style and mood
 - Technical specifications
 
 ### For Project Managers
+
 1. [ROADMAP.md](ROADMAP.md) - Full development plan
 2. [ROADMAP_VISUAL.md](ROADMAP_VISUAL.md) - Visual timeline
 3. [CONTRIBUTING.md](CONTRIBUTING.md) - Team structure
 
 **Key Sections:**
+
 - Milestone tracking
 - Resource allocation
 - Risk management
 - Success metrics
 
 ### For Testers
+
 1. [SETUP.md](SETUP.md) - Environment setup
 2. [QUICKSTART.md](QUICKSTART.md) - Testing checklist
 3. [CONTRIBUTING.md](CONTRIBUTING.md) - Bug reporting
 
 **Key Sections:**
+
 - Testing procedures
 - Bug report templates
 - Common issues
@@ -163,7 +186,8 @@ CATastrophe Documentation
 ## 🚀 Common Workflows
 
 ### Starting a New Feature
-```
+
+```text
 1. Read ROADMAP.md - Find current phase and pick a task
 2. Read CONTRIBUTING.md - Review contribution guidelines
 3. Set up environment (SETUP.md)
@@ -174,7 +198,8 @@ CATastrophe Documentation
 ```
 
 ### Fixing a Bug
-```
+
+```text
 1. Check GitHub Issues for existing reports
 2. Reproduce the bug
 3. Read QUICKSTART.md for debugging tips
@@ -184,7 +209,8 @@ CATastrophe Documentation
 ```
 
 ### Adding New Content
-```
+
+```text
 1. Review DESIGN.md for style guidelines
 2. Check ROADMAP.md for content priorities
 3. Follow asset guidelines in CONTRIBUTING.md
@@ -197,8 +223,10 @@ CATastrophe Documentation
 ## 📋 Document Summaries
 
 ### README.md (11 KB)
+
 **Purpose:** Main project documentation
 **Contains:**
+
 - Game features and overview
 - Technology stack
 - Installation and setup
@@ -212,8 +240,10 @@ CATastrophe Documentation
 ---
 
 ### ROADMAP.md (15 KB)
+
 **Purpose:** Complete development plan
 **Contains:**
+
 - Vision statement
 - 6 development phases
 - Milestone breakdown
@@ -228,8 +258,10 @@ CATastrophe Documentation
 ---
 
 ### ROADMAP_VISUAL.md (12 KB)
+
 **Purpose:** Visual timeline overview
 **Contains:**
+
 - ASCII art timeline
 - Feature summary
 - Quick phase overview
@@ -242,8 +274,10 @@ CATastrophe Documentation
 ---
 
 ### CONTRIBUTING.md (11 KB)
+
 **Purpose:** Contribution guidelines
 **Contains:**
+
 - How to contribute
 - Code standards
 - Asset guidelines
@@ -257,8 +291,10 @@ CATastrophe Documentation
 ---
 
 ### QUICKSTART.md (8 KB)
+
 **Purpose:** Developer quick reference
 **Contains:**
+
 - Essential reading list
 - Common commands
 - Key class overview
@@ -272,8 +308,10 @@ CATastrophe Documentation
 ---
 
 ### DESIGN.md (6 KB)
+
 **Purpose:** Visual design reference
 **Contains:**
+
 - Art direction
 - Character design specs
 - Environment layouts
@@ -287,8 +325,10 @@ CATastrophe Documentation
 ---
 
 ### SETUP.md (5 KB)
+
 **Purpose:** Quick setup guide
 **Contains:**
+
 - Step-by-step setup
 - Creating blueprints
 - Troubleshooting
@@ -300,8 +340,10 @@ CATastrophe Documentation
 ---
 
 ### DEV_TOOLS.md (8 KB)
+
 **Purpose:** Development tools setup guide
 **Contains:**
+
 - Editor configuration (EditorConfig, Clang-Format)
 - VS Code setup and extensions
 - GitHub Actions workflows
@@ -316,8 +358,10 @@ CATastrophe Documentation
 ---
 
 ### CHANGELOG.md (2 KB)
+
 **Purpose:** Project change history
 **Contains:**
+
 - Version history
 - Notable changes per release
 - Breaking changes
@@ -331,6 +375,7 @@ CATastrophe Documentation
 ## 🎓 Recommended Reading Path
 
 ### For New Contributors
+
 1. **README.md** (15 min) - Get the big picture
 2. **ROADMAP_VISUAL.md** (5 min) - See the timeline
 3. **SETUP.md** (5 min) - Set up environment
@@ -338,21 +383,23 @@ CATastrophe Documentation
 5. **QUICKSTART.md** (5 min) - Learn the basics
 6. **CONTRIBUTING.md** (10 min) - Understand contribution process
 
-**Total: ~50 minutes**
+Total: ~50 minutes
 
 ### For Experienced Developers
+
 1. **ROADMAP.md** (20 min) - Understand plan
 2. **QUICKSTART.md** (5 min) - Get code references
 3. **CONTRIBUTING.md** - Skim relevant sections
 
-**Total: ~30 minutes**
+Total: ~30 minutes
 
 ### For Artists/Designers
+
 1. **DESIGN.md** (10 min) - Visual style
 2. **ROADMAP.md** - Skim content milestones
 3. **CONTRIBUTING.md** - Asset guidelines section
 
-**Total: ~20 minutes**
+Total: ~20 minutes
 
 ---
 
@@ -403,11 +450,13 @@ Can't find what you're looking for? Try these searches:
 ## 🌐 External Resources
 
 ### Official Links
-- **GitHub Repository:** https://github.com/and3rn3t/catastrophe
-- **Issue Tracker:** https://github.com/and3rn3t/catastrophe/issues
-- **Discussions:** https://github.com/and3rn3t/catastrophe/discussions
+
+- **GitHub Repository:** <https://github.com/and3rn3t/catastrophe>
+- **Issue Tracker:** <https://github.com/and3rn3t/catastrophe/issues>
+- **Discussions:** <https://github.com/and3rn3t/catastrophe/discussions>
 
 ### Unreal Engine
+
 - [UE5 Documentation](https://docs.unrealengine.com/5.3/)
 - [C++ API Reference](https://docs.unrealengine.com/5.3/en-US/API/)
 - [Community Wiki](https://unrealcommunity.wiki/)
@@ -429,6 +478,7 @@ If you can't find what you're looking for:
 ## 📝 Documentation Updates
 
 This index and all documentation is updated regularly. If you find:
+
 - Outdated information
 - Broken links
 - Missing content

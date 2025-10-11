@@ -18,17 +18,48 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
     - name: Install clang-format
       run: |
         sudo apt-get update
         sudo apt-get install -y clang-format
     
-    - name: Check C++ formatting
+    - name: Check C++ formatting on changed files
       run: |
-        find Source -name "*.h" -o -name "*.cpp" | while read file; do
-          clang-format --dry-run --Werror "$file" || exit 1
+        # Get list of changed files in this PR
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+        else
+          BASE_SHA="${{ github.event.before }}"
+          HEAD_SHA="${{ github.sha }}"
+        fi
+        
+        # Get changed C++ files
+        CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT "$BASE_SHA" "$HEAD_SHA" | grep -E '\.(cpp|h)$' || true)
+        
+        if [ -z "$CHANGED_FILES" ]; then
+          echo "No C++ files changed in this PR"
+          exit 0
+        fi
+        
+        echo "Checking formatting for changed files:"
+        echo "$CHANGED_FILES"
+        
+        # Check each changed file
+        ERROR=0
+        for file in $CHANGED_FILES; do
+          if [ -f "$file" ]; then
+            if ! clang-format --dry-run --Werror "$file"; then
+              echo "::error file=$file::File is not properly formatted"
+              ERROR=1
+            fi
+          fi
         done
+        
+        exit $ERROR
 
   markdown-lint:
     name: Lint Markdown Files
@@ -36,11 +67,40 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
-    - name: Lint Markdown files
+    - name: Get changed markdown files
+      id: changed-files
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+        else
+          BASE_SHA="${{ github.event.before }}"
+          HEAD_SHA="${{ github.sha }}"
+        fi
+        
+        # Get changed markdown files
+        CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT "$BASE_SHA" "$HEAD_SHA" | grep '\.md$' || true)
+        
+        if [ -z "$CHANGED_FILES" ]; then
+          echo "No markdown files changed"
+          echo "files_changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          # Convert newlines to spaces for the action
+          FILES_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
+          echo "files_changed=true" >> $GITHUB_OUTPUT
+          echo "files=$FILES_LIST" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Lint changed Markdown files
+      if: steps.changed-files.outputs.files_changed == 'true'
       uses: DavidAnson/markdownlint-cli2-action@v14
       with:
-        globs: '**/*.md'
+        globs: ${{ steps.changed-files.outputs.files }}
         config: '.markdownlint.json'
         
   spell-check:
@@ -49,12 +109,39 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
-    - name: Check Spelling
+    - name: Get changed files for spell check
+      id: changed-files
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+        else
+          BASE_SHA="${{ github.event.before }}"
+          HEAD_SHA="${{ github.sha }}"
+        fi
+        
+        # Get changed files (md, cpp, h)
+        CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT "$BASE_SHA" "$HEAD_SHA" | grep -E '\.(md|cpp|h)$' || true)
+        
+        if [ -z "$CHANGED_FILES" ]; then
+          echo "No files to spell check"
+          echo "files_changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changed files to spell check:"
+          echo "$CHANGED_FILES"
+          echo "files_changed=true" >> $GITHUB_OUTPUT
+          # Save files to a temporary file for cspell
+          echo "$CHANGED_FILES" > /tmp/changed_files.txt
+        fi
+    
+    - name: Spell check changed files
+      if: steps.changed-files.outputs.files_changed == 'true'
       uses: streetsidesoftware/cspell-action@v5
       with:
         files: |
-          **/*.md
-          **/*.cpp
-          **/*.h
+          ${{ steps.changed-files.outputs.files }}
         config: .cspell.json
+        incremental_files_only: true
