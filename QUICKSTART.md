@@ -6,12 +6,13 @@ New to the project? Start here!
 
 ### 1. Essential Reading (Priority Order)
 1. **[README.md](README.md)** - Project overview and setup (15 min)
-2. **[ROADMAP.md](ROADMAP.md)** - Development plan and priorities (20 min)
-3. **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute (10 min)
-4. **[SETUP.md](SETUP.md)** - Quick setup guide (5 min)
-5. **[DESIGN.md](DESIGN.md)** - Visual design reference (10 min)
+2. **[DEV_TOOLS.md](DEV_TOOLS.md)** - Development tools setup (10 min) ⭐
+3. **[ROADMAP.md](ROADMAP.md)** - Development plan and priorities (20 min)
+4. **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute (10 min)
+5. **[SETUP.md](SETUP.md)** - Quick setup guide (5 min)
+6. **[DESIGN.md](DESIGN.md)** - Visual design reference (10 min)
 
-**Total reading time: ~60 minutes**
+**Total reading time: ~70 minutes**
 
 ---
 
@@ -31,10 +32,14 @@ catastrophe/
 │   ├── Meshes/                  # 3D models
 │   └── Textures/                # Textures
 ├── Config/                       # Configuration files
-├── ROADMAP.md                    # Development roadmap ⭐
-├── CONTRIBUTING.md               # Contribution guide ⭐
+├── .vscode/                      # VS Code configuration ⭐
+├── .github/                      # GitHub workflows & templates ⭐
+├── ROADMAP.md                    # Development roadmap
+├── CONTRIBUTING.md               # Contribution guide
+├── DEV_TOOLS.md                  # Dev tools setup ⭐
 ├── README.md                     # Main documentation
 ├── SETUP.md                      # Quick setup
+├── CHANGELOG.md                  # Change history ⭐
 └── DESIGN.md                     # Design document
 ```
 

@@ -98,6 +98,26 @@ make CatastropheEditor
 - Double-click `Catastrophe.uproject`
 - Or launch from Epic Games Launcher
 
+### 5. Set Up Development Tools (Recommended)
+
+For the best development experience, we provide comprehensive tooling:
+
+```bash
+# Optional: Install pre-commit hooks for automated code quality checks
+pip install pre-commit
+pre-commit install
+
+# Open in VS Code with our workspace configuration
+code Catastrophe.code-workspace
+```
+
+**See [DEV_TOOLS.md](DEV_TOOLS.md) for detailed setup of:**
+- VS Code extensions and configuration
+- Code formatting (EditorConfig, Clang-Format)
+- GitHub Actions CI/CD
+- Pre-commit hooks
+- Debugging setup
+
 ## 🎨 Setting Up the Game
 
 ### Creating the Main Level
@@ -290,11 +310,15 @@ Contributions are welcome! We're following a structured development roadmap to b
 
 ### Development Guidelines
 
-- **C++ Code**: Follow Unreal Engine coding standards
+- **C++ Code**: Follow Unreal Engine coding standards (enforced by `.clang-format`)
 - **Blueprints**: Keep them organized and well-commented
-- **Commits**: Reference roadmap phases/milestones when relevant
+- **Commits**: Use conventional commit format (`feat:`, `fix:`, `docs:`, etc.)
+- **Branch Naming**: Use prefixes like `feature/`, `bugfix/`, `docs/`
 - **Testing**: Test on multiple hardware configurations if possible
 - **Documentation**: Update docs when adding new features
+- **Code Quality**: Use provided pre-commit hooks and linters
+
+**See [DEV_TOOLS.md](DEV_TOOLS.md) for complete development tools setup and [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.**
 
 ### Areas We Need Help
 
@@ -311,6 +335,8 @@ Check [ROADMAP.md](ROADMAP.md) for current priorities! Common contribution areas
 Open an issue or discussion on GitHub!
 
 ## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 This project is for educational and experimental purposes.
 

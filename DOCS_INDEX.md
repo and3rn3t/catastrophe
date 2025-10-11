@@ -9,18 +9,36 @@ CATastrophe Documentation
 ├─ Getting Started
 │  ├─ README.md           - Project overview & main documentation
 │  ├─ QUICKSTART.md       - Quick reference for developers
-│  └─ SETUP.md            - Step-by-step setup guide
+│  ├─ SETUP.md            - Step-by-step setup guide
+│  └─ DEV_TOOLS.md        - Development tools setup guide
 │
 ├─ Planning & Roadmap
 │  ├─ ROADMAP.md          - Detailed 12-month development plan
-│  └─ ROADMAP_VISUAL.md   - Visual timeline and summary
+│  ├─ ROADMAP_VISUAL.md   - Visual timeline and summary
+│  └─ CURRENT_SPRINT.md   - Current sprint/iteration status
 │
 ├─ Contributing
 │  ├─ CONTRIBUTING.md     - How to contribute to the project
+│  ├─ CHANGELOG.md        - Project change history
+│  ├─ LICENSE             - MIT License
 │  └─ GitHub Templates/   - Issue & PR templates
+│     ├─ PULL_REQUEST_TEMPLATE.md
+│     ├─ ISSUE_TEMPLATE/
+│     ├─ SECURITY.md      - Security policy
+│     ├─ CODEOWNERS       - Code review assignments
+│     └─ FUNDING.yml      - Sponsorship info
 │
-└─ Design Reference
-   └─ DESIGN.md           - Visual design document
+├─ Design Reference
+│  └─ DESIGN.md           - Visual design document
+│
+└─ Development Tools
+   ├─ .editorconfig       - Editor formatting rules
+   ├─ .clang-format       - C++ code style
+   ├─ .markdownlint.json  - Markdown linting rules
+   ├─ .cspell.json        - Spell checking config
+   ├─ .pre-commit-config.yaml - Git hooks
+   ├─ .vscode/            - VS Code configuration
+   └─ .github/workflows/  - CI/CD pipelines
 ```
 
 ---
@@ -40,6 +58,13 @@ CATastrophe Documentation
 - Build configuration
 - First-time setup steps
 - Troubleshooting common issues
+
+→ **For development tools:** [DEV_TOOLS.md](DEV_TOOLS.md)
+- VS Code setup and extensions
+- Code formatting and linting
+- Pre-commit hooks
+- CI/CD workflows
+- Debugging configuration
 
 ### Understand the Development Plan
 → **Start here:** [ROADMAP.md](ROADMAP.md)
@@ -80,14 +105,16 @@ CATastrophe Documentation
 ### For Programmers
 1. [README.md](README.md) - Overview and tech stack
 2. [QUICKSTART.md](QUICKSTART.md) - Development commands and class reference
-3. [CONTRIBUTING.md](CONTRIBUTING.md) - Code standards
-4. [ROADMAP.md](ROADMAP.md) - Feature priorities
+3. [DEV_TOOLS.md](DEV_TOOLS.md) - Development tools setup
+4. [CONTRIBUTING.md](CONTRIBUTING.md) - Code standards
+5. [ROADMAP.md](ROADMAP.md) - Feature priorities
 
 **Key Sections:**
 - C++ coding standards
 - Blueprint best practices
 - Debugging tips
 - Performance targets
+- CI/CD workflows
 
 ### For Artists & Designers
 1. [DESIGN.md](DESIGN.md) - Visual style guide
@@ -272,16 +299,46 @@ CATastrophe Documentation
 
 ---
 
+### DEV_TOOLS.md (8 KB)
+**Purpose:** Development tools setup guide
+**Contains:**
+- Editor configuration (EditorConfig, Clang-Format)
+- VS Code setup and extensions
+- GitHub Actions workflows
+- Pre-commit hooks
+- Code quality tools
+- Debugging configuration
+- Best practices
+
+**Read time:** ~10 minutes
+**Audience:** Developers
+
+---
+
+### CHANGELOG.md (2 KB)
+**Purpose:** Project change history
+**Contains:**
+- Version history
+- Notable changes per release
+- Breaking changes
+- Bug fixes and improvements
+
+**Read time:** ~3 minutes
+**Audience:** Everyone
+
+---
+
 ## 🎓 Recommended Reading Path
 
 ### For New Contributors
 1. **README.md** (15 min) - Get the big picture
 2. **ROADMAP_VISUAL.md** (5 min) - See the timeline
 3. **SETUP.md** (5 min) - Set up environment
-4. **QUICKSTART.md** (5 min) - Learn the basics
-5. **CONTRIBUTING.md** (10 min) - Understand contribution process
+4. **DEV_TOOLS.md** (10 min) - Configure development tools
+5. **QUICKSTART.md** (5 min) - Learn the basics
+6. **CONTRIBUTING.md** (10 min) - Understand contribution process
 
-**Total: ~40 minutes**
+**Total: ~50 minutes**
 
 ### For Experienced Developers
 1. **ROADMAP.md** (20 min) - Understand plan
@@ -335,9 +392,11 @@ Can't find what you're looking for? Try these searches:
 | ROADMAP_VISUAL.md | 12 KB | 5 min | Oct 2025 |
 | CONTRIBUTING.md | 11 KB | 10 min | Oct 2025 |
 | QUICKSTART.md | 8 KB | 5 min | Oct 2025 |
+| DEV_TOOLS.md | 8 KB | 10 min | Oct 2025 |
 | DESIGN.md | 6 KB | 10 min | Oct 2025 |
 | SETUP.md | 5 KB | 5 min | Oct 2025 |
-| **TOTAL** | **68 KB** | **70 min** | |
+| CHANGELOG.md | 2 KB | 3 min | Oct 2025 |
+| **TOTAL** | **78 KB** | **83 min** | |
 
 ---
 
