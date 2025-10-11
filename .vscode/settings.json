@@ -1,0 +1,90 @@
+{
+	"files.associations": {
+		"*.uproject": "json",
+		"*.uplugin": "json"
+	},
+	"files.exclude": {
+		"**/.vs": true,
+		"**/.vscode": false,
+		"**/Binaries": true,
+		"**/DerivedDataCache": true,
+		"**/Intermediate": true,
+		"**/Saved": true,
+		"**/*.sln": true,
+		"**/*.suo": true,
+		"**/*.xcodeproj": true,
+		"**/*.xcworkspace": true
+	},
+	"search.exclude": {
+		"**/Binaries": true,
+		"**/DerivedDataCache": true,
+		"**/Intermediate": true,
+		"**/Saved": true
+	},
+	"C_Cpp.default.cppStandard": "c++17",
+	"C_Cpp.default.intelliSenseMode": "msvc-x64",
+	"C_Cpp.errorSquiggles": "enabled",
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "ms-vscode.cpptools",
+	"[cpp]": {
+		"editor.defaultFormatter": "xaver.clang-format",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false
+	},
+	"[c]": {
+		"editor.defaultFormatter": "xaver.clang-format",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false
+	},
+	"[markdown]": {
+		"editor.wordWrap": "on",
+		"editor.quickSuggestions": false
+	},
+	"[yaml]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+		"editor.autoIndent": "advanced"
+	},
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	"editor.renderWhitespace": "boundary",
+	"editor.rulers": [120],
+	"git.ignoreLimitWarning": true,
+	"todo-tree.general.tags": [
+		"TODO",
+		"FIXME",
+		"NOTE",
+		"HACK",
+		"XXX",
+		"BUG"
+	],
+	"todo-tree.highlights.defaultHighlight": {
+		"icon": "alert",
+		"type": "text",
+		"foreground": "#fff",
+		"opacity": 50
+	},
+	"todo-tree.highlights.customHighlight": {
+		"TODO": {
+			"icon": "check",
+			"foreground": "#fff",
+			"background": "#0098ff",
+			"iconColour": "#0098ff"
+		},
+		"FIXME": {
+			"icon": "tools",
+			"foreground": "#fff",
+			"background": "#f06292",
+			"iconColour": "#f06292"
+		},
+		"BUG": {
+			"icon": "bug",
+			"foreground": "#fff",
+			"background": "#ff5252",
+			"iconColour": "#ff5252"
+		}
+	}
+}

@@ -5,19 +5,21 @@
 New to the project? Start here!
 
 ### 1. Essential Reading (Priority Order)
-1. **[README.md](README.md)** - Project overview and setup (15 min)
-2. **[ROADMAP.md](ROADMAP.md)** - Development plan and priorities (20 min)
-3. **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute (10 min)
-4. **[SETUP.md](SETUP.md)** - Quick setup guide (5 min)
-5. **[DESIGN.md](DESIGN.md)** - Visual design reference (10 min)
 
-**Total reading time: ~60 minutes**
+1. **[README.md](README.md)** - Project overview and setup (15 min)
+2. **[DEV_TOOLS.md](DEV_TOOLS.md)** - Development tools setup (10 min) ⭐
+3. **[ROADMAP.md](ROADMAP.md)** - Development plan and priorities (20 min)
+4. **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute (10 min)
+5. **[SETUP.md](SETUP.md)** - Quick setup guide (5 min)
+6. **[DESIGN.md](DESIGN.md)** - Visual design reference (10 min)
+
+Total reading time: ~70 minutes
 
 ---
 
 ## 📁 Repository Structure
 
-```
+```text
 catastrophe/
 ├── Source/Catastrophe/          # C++ source code
 │   ├── CatCharacter.cpp/.h      # Player character
@@ -31,10 +33,14 @@ catastrophe/
 │   ├── Meshes/                  # 3D models
 │   └── Textures/                # Textures
 ├── Config/                       # Configuration files
-├── ROADMAP.md                    # Development roadmap ⭐
-├── CONTRIBUTING.md               # Contribution guide ⭐
+├── .vscode/                      # VS Code configuration ⭐
+├── .github/                      # GitHub workflows & templates ⭐
+├── ROADMAP.md                    # Development roadmap
+├── CONTRIBUTING.md               # Contribution guide
+├── DEV_TOOLS.md                  # Dev tools setup ⭐
 ├── README.md                     # Main documentation
 ├── SETUP.md                      # Quick setup
+├── CHANGELOG.md                  # Change history ⭐
 └── DESIGN.md                     # Design document
 ```
 
@@ -45,6 +51,7 @@ catastrophe/
 Check [ROADMAP.md](ROADMAP.md) for current phase!
 
 ### How to Find Tasks
+
 1. Open [ROADMAP.md](ROADMAP.md)
 2. Find the current phase
 3. Look for unchecked `[ ]` items
@@ -58,6 +65,7 @@ Check [ROADMAP.md](ROADMAP.md) for current phase!
 ### Building the Project
 
 **Windows (Visual Studio):**
+
 ```bash
 # Generate project files
 "%UE5_DIR%\Engine\Build\BatchFiles\Build.bat" -projectfiles
@@ -67,6 +75,7 @@ MSBuild Catastrophe.sln /p:Configuration="Development Editor"
 ```
 
 **Mac/Linux:**
+
 ```bash
 # Generate project files
 ~/UnrealEngine/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh
@@ -78,10 +87,12 @@ make CatastropheEditor
 ### Testing
 
 **Play In Editor (PIE):**
+
 - Press `Alt+P` in Unreal Editor
 - Or click the "Play" button
 
 **Run Tests:**
+
 - Currently manual testing
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for testing checklist
 
@@ -107,9 +118,11 @@ git push origin feature/your-feature-name
 ## 🎮 Key Classes Overview
 
 ### ACatCharacter (Player)
+
 **Location:** `Source/Catastrophe/CatCharacter.cpp`
 
 **Key Functions:**
+
 - `MoveForward(float Value)` - Forward/backward movement
 - `MoveRight(float Value)` - Left/right movement
 - `StartSprinting()` / `StopSprinting()` - Sprint toggle
@@ -117,28 +130,34 @@ git push origin feature/your-feature-name
 - `AddMischiefScore(float Points)` - Score tracking
 
 **Key Properties:**
+
 - `MischiefScore` - Current score
 - `WalkSpeed` / `SprintSpeed` - Movement speeds
 - `CameraBoom` - Camera arm component
 - `FollowCamera` - Third-person camera
 
 ### AHumanNPC (AI)
+
 **Location:** `Source/Catastrophe/HumanNPC.cpp`
 
 **Key Functions:**
+
 - `Tick()` - Detection and AI updates
 - `DetectCat()` - Vision cone detection
 - `CanSeeCat()` - Line of sight check
 
 **Key Properties:**
+
 - `DetectionRadius` - How far NPCs can see
 - `VisionConeAngle` - Field of view angle
 - `bCatDetected` - Detection state
 
 ### ACatastropheGameMode
+
 **Location:** `Source/Catastrophe/CatastropheGameMode.cpp`
 
 **Key Functions:**
+
 - `OnCatCaught()` - Handle game over
 - `GetTotalDestructibleObjects()` - Count objects
 
@@ -147,6 +166,7 @@ git push origin feature/your-feature-name
 ## 🎨 Asset Creation Quick Reference
 
 ### Naming Conventions
+
 - **Blueprints:** `BP_Name`
 - **Materials:** `M_Name` or `MI_Name` (instance)
 - **Textures:** `T_Name`
@@ -156,6 +176,7 @@ git push origin feature/your-feature-name
 - **Sounds:** `S_Name`
 
 ### Performance Targets
+
 - **Cat Model:** 8,000-12,000 tris
 - **Human NPC:** 15,000-20,000 tris
 - **Props:** 500-5,000 tris
@@ -163,6 +184,7 @@ git push origin feature/your-feature-name
 - **Target FPS:** 60 FPS on GTX 1660/RX 580
 
 ### Required Tags for Objects
+
 - `"Destructible"` - For all interactive objects
 - `"Vase"` - 10 points
 - `"Furniture"` - 15 points
@@ -174,6 +196,7 @@ git push origin feature/your-feature-name
 ## 🐛 Debugging Tips
 
 ### Logging in C++
+
 ```cpp
 // Basic log
 UE_LOG(LogTemp, Warning, TEXT("Cat position: %s"), 
@@ -187,6 +210,7 @@ if (bIsSprinting)
 ```
 
 ### Visual Debugging
+
 ```cpp
 // Draw debug sphere
 DrawDebugSphere(GetWorld(), Location, Radius, 12, FColor::Green, false, 1.0f);
@@ -198,17 +222,20 @@ DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f);
 ### Common Issues
 
 **"Missing modules" error:**
+
 ```bash
 # Right-click .uproject → Generate Visual Studio project files
 # Then rebuild
 ```
 
 **Physics not working:**
+
 - Check "Simulate Physics" is enabled
 - Verify collision presets are correct
 - Ensure object has "Destructible" tag
 
 **AI not moving:**
+
 - Build navigation: Build → Build Paths
 - Press `P` in viewport to visualize nav mesh
 - Check Nav Mesh Bounds Volume covers level
@@ -235,16 +262,19 @@ Before committing, verify:
 ## 📚 Helpful Resources
 
 ### Unreal Engine
+
 - [UE5 Documentation](https://docs.unrealengine.com/5.3/)
 - [C++ API Reference](https://docs.unrealengine.com/5.3/en-US/API/)
 - [Blueprint Documentation](https://docs.unrealengine.com/5.3/en-US/blueprints-visual-scripting-in-unreal-engine/)
 - [Unreal Slackers Discord](https://unrealslackers.org/)
 
 ### Game Development
+
 - [Game Programming Patterns](https://gameprogrammingpatterns.com/)
 - [Unreal Engine Community Wiki](https://unrealcommunity.wiki/)
 
 ### Project Specific
+
 - [GitHub Issues](https://github.com/and3rn3t/catastrophe/issues) - Bug reports & features
 - [Roadmap](ROADMAP.md) - Development plan
 - [Contributing Guide](CONTRIBUTING.md) - How to help
@@ -254,24 +284,28 @@ Before committing, verify:
 ## 💡 Quick Tips
 
 ### For Programmers
+
 - Use `UPROPERTY()` macros for properties you want in editor
 - Prefix member variables with letter indicating type (b for bool, etc.)
 - Keep tick functions efficient - they run every frame
 - Use `UE_LOG` instead of `printf` for debugging
 
 ### For Artists
+
 - Test assets in-engine early and often
 - Use LODs for better performance
 - Follow PBR workflow for materials
 - Keep polycount within targets
 
 ### For Designers
+
 - Playtest frequently
 - Get feedback from others
 - Balance is iterative - start conservative
 - Document your design decisions
 
 ### For Everyone
+
 - Commit often with clear messages
 - Reference roadmap milestones
 - Ask questions - no question is dumb!

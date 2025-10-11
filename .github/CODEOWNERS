@@ -1,0 +1,33 @@
+# CODEOWNERS file for Catastrophe project
+# This file defines who is responsible for reviewing changes to specific parts of the codebase
+# More info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @and3rn3t
+
+# Documentation
+*.md @and3rn3t
+/DOCS_INDEX.md @and3rn3t
+/README.md @and3rn3t
+/CONTRIBUTING.md @and3rn3t
+/ROADMAP.md @and3rn3t
+
+# C++ Source Code
+/Source/ @and3rn3t
+
+# Configuration Files
+/Config/ @and3rn3t
+*.ini @and3rn3t
+
+# Build Configuration
+*.Build.cs @and3rn3t
+*.Target.cs @and3rn3t
+*.uproject @and3rn3t
+
+# GitHub Configuration
+/.github/ @and3rn3t
+
+# Development Tools
+/.vscode/ @and3rn3t
+/.editorconfig @and3rn3t
+/.clang-format @and3rn3t

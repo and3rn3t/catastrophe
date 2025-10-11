@@ -1,0 +1,56 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C++ source files
+[*.{h,cpp,hpp,c,cc,cxx}]
+indent_style = tab
+indent_size = 4
+trim_trailing_whitespace = true
+
+# C# files (for Unreal Build Tool)
+[*.cs]
+indent_style = tab
+indent_size = 4
+
+# JSON files (Unreal project files)
+[*.{json,uproject,uplugin}]
+indent_style = tab
+indent_size = 4
+
+# INI files (Unreal config files)
+[*.ini]
+indent_style = space
+indent_size = 4
+
+# Markdown files
+[*.md]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+
+# YAML files (for GitHub Actions)
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_style = tab
+end_of_line = lf
+
+# Batch scripts
+[*.{bat,cmd}]
+end_of_line = crlf
+
+# Makefiles
+[Makefile]
+indent_style = tab

@@ -1,29 +1,35 @@
 # CATastrophe: A Mischief Simulator
 
-A 3D open-world adventure game built with **Unreal Engine 5** where you play as a mischievous cat causing havoc in a realistic house environment. Inspired by Untitled Goose Game, but with stunning 3D graphics, realistic physics, and AAA-quality gameplay.
+A 3D open-world adventure game built with **Unreal Engine 5** where you play as a mischievous cat
+causing havoc in a realistic house environment. Inspired by Untitled Goose Game, but with stunning
+3D graphics, realistic physics, and AAA-quality gameplay.
 
 📍 **[Product Roadmap](ROADMAP.md)** | 📖 **[Documentation Index](DOCS_INDEX.md)** | 🚀 **[Quick Start](QUICKSTART.md)**
 
 ## 🎮 Game Features
 
 ### Playable Cat Character
+
 - **Third-person 3D control** with smooth movement and camera
 - **Sprint mechanic** - Move faster but risk getting caught
 - **Jump and climb** abilities for vertical exploration
 - **Interactive system** - Knock over objects, scratch furniture, steal food
 
 ### Realistic 3D Environment
+
 - Detailed house interior with multiple rooms
 - Realistic physics for all interactive objects
 - Dynamic lighting and shadows
 - High-quality materials and textures
 
 ### Stealth Mechanics
+
 - **AI-driven human NPCs** with vision cones and patrol routes
 - Get caught if spotted while sprinting or causing mischief
 - Strategic gameplay requiring timing and positioning
 
 ### Interactive Objects
+
 - **Vases** (10 points) - Knock them off tables and shelves
 - **Furniture** (15 points) - Scratch and damage household items
 - **Curtains** (20 points) - Climb and shred window treatments
@@ -40,11 +46,13 @@ A 3D open-world adventure game built with **Unreal Engine 5** where you play as 
 ## 📋 Prerequisites
 
 ### Required Software
+
 - **Unreal Engine 5.3+** - [Download from Epic Games Launcher](https://www.unrealengine.com/)
 - **Visual Studio 2022** (Windows) or **Xcode** (Mac) - For C++ compilation
 - **Git** - For version control
 
 ### Hardware Requirements (Minimum)
+
 - **OS**: Windows 10/11 64-bit, macOS 11+, or Ubuntu 20.04+
 - **Processor**: Quad-core Intel or AMD, 2.5 GHz+
 - **Memory**: 16 GB RAM
@@ -52,6 +60,7 @@ A 3D open-world adventure game built with **Unreal Engine 5** where you play as 
 - **Storage**: 10 GB available space
 
 ### Recommended
+
 - 32 GB RAM
 - NVIDIA RTX 2070 or AMD equivalent
 - SSD storage
@@ -59,13 +68,16 @@ A 3D open-world adventure game built with **Unreal Engine 5** where you play as 
 ## 🚀 Getting Started
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/and3rn3t/catastrophe.git
 cd catastrophe
 ```
 
 ### 2. Generate Project Files
+
 **Windows:**
+
 ```bash
 # Right-click Catastrophe.uproject and select "Generate Visual Studio project files"
 # Or use the command line:
@@ -73,34 +85,62 @@ cd catastrophe
 ```
 
 **Mac/Linux:**
+
 ```bash
 # Generate Xcode/Makefile project
 ~/UnrealEngine/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh -project="$(pwd)/Catastrophe.uproject" -game -engine
 ```
 
 ### 3. Build the Project
+
 **Windows:**
+
 - Open `Catastrophe.sln` in Visual Studio 2022
 - Set build configuration to **Development Editor**
 - Build solution (Ctrl+Shift+B)
 
 **Mac:**
+
 - Open `Catastrophe.xcworkspace` in Xcode
 - Select **Development Editor** scheme
 - Build (Cmd+B)
 
 **Linux:**
+
 ```bash
 make CatastropheEditor
 ```
 
 ### 4. Open in Unreal Editor
+
 - Double-click `Catastrophe.uproject`
 - Or launch from Epic Games Launcher
+
+### 5. Set Up Development Tools (Recommended)
+
+For the best development experience, we provide comprehensive tooling:
+
+```bash
+# Optional: Install pre-commit hooks for automated code quality checks
+pip install pre-commit
+pre-commit install
+
+# Open in VS Code with our workspace configuration
+code Catastrophe.code-workspace
+```
+
+**See [DEV_TOOLS.md](DEV_TOOLS.md) for detailed setup of:**
+
+- VS Code extensions and configuration
+- Code formatting (EditorConfig, Clang-Format)
+- GitHub Actions CI/CD
+- Pre-commit hooks
+- Debugging setup
 
 ## 🎨 Setting Up the Game
 
 ### Creating the Main Level
+
 1. In Content Browser, navigate to `Content/Maps/`
 2. Create a new level or open `MainLevel`
 3. Add the following actors:
@@ -110,9 +150,11 @@ make CatastropheEditor
    - **Destructible Objects** - Vases, furniture, curtains, food
 
 ### Creating Blueprints
+
 The C++ classes are ready, but you need to create Blueprint children in the editor:
 
 #### BP_CatCharacter (Based on CatCharacter C++)
+
 1. Content Browser → Right-click → Blueprint Class
 2. Search for "CatCharacter" parent class
 3. Name it "BP_CatCharacter"
@@ -121,6 +163,7 @@ The C++ classes are ready, but you need to create Blueprint children in the edit
 6. Set in GameMode as Default Pawn Class
 
 #### BP_HumanNPC (Based on HumanNPC C++)
+
 1. Create Blueprint from HumanNPC parent class
 2. Add skeletal mesh (human character model)
 3. Set up AI Controller
@@ -128,14 +171,18 @@ The C++ classes are ready, but you need to create Blueprint children in the edit
 5. Tune detection radius and vision cone
 
 #### Interactive Objects
+
 Create these as regular Actors with:
+
 - Static Mesh component
 - Physics simulation enabled
 - Appropriate collision settings
 - Tags: "Destructible" + specific type ("Vase", "Furniture", etc.)
 
 ### Input Configuration
+
 Input mappings are already configured in `Config/DefaultInput.ini`:
+
 - **WASD / Arrow Keys** - Move
 - **Mouse** - Look around
 - **Space** - Jump
@@ -156,7 +203,7 @@ Input mappings are already configured in `Config/DefaultInput.ini`:
 
 ## 📁 Project Structure
 
-```
+```text
 Catastrophe/
 ├── Catastrophe.uproject          # Unreal project file
 ├── Source/                       # C++ source code
@@ -186,7 +233,9 @@ Catastrophe/
 ### Key C++ Classes
 
 #### ACatCharacter
+
 The main playable character with:
+
 - Movement (WASD)
 - Sprint mechanic (Shift)
 - Interaction system (E key)
@@ -194,14 +243,18 @@ The main playable character with:
 - Third-person camera setup
 
 #### AHumanNPC
+
 AI-controlled humans with:
+
 - Vision cone detection
 - Patrol behavior
 - Cat detection logic
 - Game over trigger
 
 #### ACatastropheGameMode
+
 Game management:
+
 - Spawn rules
 - Game over handling
 - Score tracking
@@ -223,21 +276,25 @@ Game management:
 ## 🎨 Asset Guidelines
 
 ### Cat Character Model
+
 - Skeletal mesh with animations (idle, walk, run, jump, interact)
 - ~5,000-10,000 polygons for good performance
 - PBR materials for realistic fur
 
 ### Human NPC Models
+
 - Skeletal mesh with basic animations (idle, walk, look around)
 - ~8,000-15,000 polygons
 - Various character types for diversity
 
 ### Environment
+
 - Modular pieces for flexible level design
 - Realistic house interior aesthetics
 - Optimized for real-time rendering
 
 ### Destructible Objects
+
 - Physics-enabled static meshes
 - Breaking/destruction effects (optional)
 - Clear visual feedback when destroyed
@@ -247,6 +304,7 @@ Game management:
 See our comprehensive [**Product Roadmap**](ROADMAP.md) for detailed development plans and timelines!
 
 ### Near-Term Goals (Phases 1-2)
+
 - [ ] Enhanced cat mechanics (jump, climb, pounce)
 - [ ] Improved AI with behavior trees
 - [ ] Complete UI/UX system
@@ -256,6 +314,7 @@ See our comprehensive [**Product Roadmap**](ROADMAP.md) for detailed development
 - [ ] More object types and interactions
 
 ### Mid-Term Goals (Phases 3-4)
+
 - [ ] Mission and objective system
 - [ ] Achievement system (50+ achievements)
 - [ ] Cat customization (colors, patterns, accessories)
@@ -264,6 +323,7 @@ See our comprehensive [**Product Roadmap**](ROADMAP.md) for detailed development
 - [ ] Performance optimization
 
 ### Long-Term Goals (Phase 5+)
+
 - [ ] Multiplayer co-op mode
 - [ ] VR support
 - [ ] Mobile/console ports
@@ -290,15 +350,20 @@ Contributions are welcome! We're following a structured development roadmap to b
 
 ### Development Guidelines
 
-- **C++ Code**: Follow Unreal Engine coding standards
+- **C++ Code**: Follow Unreal Engine coding standards (enforced by `.clang-format`)
 - **Blueprints**: Keep them organized and well-commented
-- **Commits**: Reference roadmap phases/milestones when relevant
+- **Commits**: Use conventional commit format (`feat:`, `fix:`, `docs:`, etc.)
+- **Branch Naming**: Use prefixes like `feature/`, `bugfix/`, `docs/`
 - **Testing**: Test on multiple hardware configurations if possible
 - **Documentation**: Update docs when adding new features
+- **Code Quality**: Use provided pre-commit hooks and linters
+
+**See [DEV_TOOLS.md](DEV_TOOLS.md) for complete development tools setup and [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.**
 
 ### Areas We Need Help
 
 Check [ROADMAP.md](ROADMAP.md) for current priorities! Common contribution areas:
+
 - 🎨 **3D Art**: Character models, environment assets, textures
 - 🎵 **Audio**: Sound effects, music tracks, voice acting
 - 💻 **Programming**: Gameplay features, AI, optimization
@@ -312,6 +377,8 @@ Open an issue or discussion on GitHub!
 
 ## 📝 License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 This project is for educational and experimental purposes.
 
 ## 🎮 Credits
@@ -324,4 +391,3 @@ Built with **Unreal Engine 5** by Epic Games.
 **Ready to cause some CATastrophe!** 😼💥
 
 For questions or support, please open an issue on GitHub.
-
