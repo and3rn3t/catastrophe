@@ -2,6 +2,8 @@
 
 A 3D open-world adventure game built with **Unreal Engine 5** where you play as a mischievous cat causing havoc in a realistic house environment. Inspired by Untitled Goose Game, but with stunning 3D graphics, realistic physics, and AAA-quality gameplay.
 
+📍 **[Product Roadmap](ROADMAP.md)** | 📖 **[Documentation Index](DOCS_INDEX.md)** | 🚀 **[Quick Start](QUICKSTART.md)**
+
 ## 🎮 Game Features
 
 ### Playable Cat Character
@@ -242,26 +244,71 @@ Game management:
 
 ## 🚀 Future Enhancements
 
-- [ ] More rooms and open-world exploration
-- [ ] Cat customization (colors, patterns, accessories)
-- [ ] Achievement system
-- [ ] Multiple difficulty levels
+See our comprehensive [**Product Roadmap**](ROADMAP.md) for detailed development plans and timelines!
+
+### Near-Term Goals (Phases 1-2)
+- [ ] Enhanced cat mechanics (jump, climb, pounce)
+- [ ] Improved AI with behavior trees
+- [ ] Complete UI/UX system
 - [ ] Sound effects and music
+- [ ] Multi-room house environment
 - [ ] Particle effects for destruction
 - [ ] More object types and interactions
+
+### Mid-Term Goals (Phases 3-4)
+- [ ] Mission and objective system
+- [ ] Achievement system (50+ achievements)
+- [ ] Cat customization (colors, patterns, accessories)
+- [ ] Multiple difficulty levels and game modes
 - [ ] Save/load system
+- [ ] Performance optimization
+
+### Long-Term Goals (Phase 5+)
 - [ ] Multiplayer co-op mode
 - [ ] VR support
 - [ ] Mobile/console ports
+- [ ] Seasonal content updates
+- [ ] Modding support
+
+👉 **Check out [ROADMAP.md](ROADMAP.md) for the complete 12-month development plan!**
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+Contributions are welcome! We're following a structured development roadmap to build CATastrophe into an amazing game.
+
+### How to Contribute
+
+1. **Check the [Roadmap](ROADMAP.md)** - See what phase we're in and what features are planned
+2. **Pick a Task** - Choose something from the current phase that matches your skills
+3. **Fork the Repository** - Create your own copy
+4. **Create a Feature Branch** - `git checkout -b feature/your-feature-name`
+5. **Make Your Changes** - Follow our coding standards (see below)
+6. **Test Thoroughly** - Ensure your changes work and don't break existing features
+7. **Commit Your Changes** - Use clear, descriptive commit messages
+8. **Push to Your Branch** - `git push origin feature/your-feature-name`
+9. **Open a Pull Request** - Describe your changes and reference roadmap milestones
+
+### Development Guidelines
+
+- **C++ Code**: Follow Unreal Engine coding standards
+- **Blueprints**: Keep them organized and well-commented
+- **Commits**: Reference roadmap phases/milestones when relevant
+- **Testing**: Test on multiple hardware configurations if possible
+- **Documentation**: Update docs when adding new features
+
+### Areas We Need Help
+
+Check [ROADMAP.md](ROADMAP.md) for current priorities! Common contribution areas:
+- 🎨 **3D Art**: Character models, environment assets, textures
+- 🎵 **Audio**: Sound effects, music tracks, voice acting
+- 💻 **Programming**: Gameplay features, AI, optimization
+- 🎮 **Level Design**: Room layouts, object placement
+- 📝 **Documentation**: Tutorials, guides, localization
+- 🧪 **Testing**: Bug reports, QA, playtest feedback
+
+### Questions?
+
+Open an issue or discussion on GitHub!
 
 ## 📝 License
 
