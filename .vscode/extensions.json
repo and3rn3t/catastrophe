@@ -1,31 +1,18 @@
 {
 	"recommendations": [
-		// C++ Development
 		"ms-vscode.cpptools",
 		"ms-vscode.cpptools-extension-pack",
 		"llvm-vs-code-extensions.vscode-clangd",
-		
-		// Git Integration
 		"eamodio.gitlens",
 		"github.vscode-pull-request-github",
-		
-		// Code Quality
 		"editorconfig.editorconfig",
 		"xaver.clang-format",
-		
-		// Markdown
 		"yzhang.markdown-all-in-one",
 		"davidanson.vscode-markdownlint",
-		
-		// YAML (for GitHub Actions)
 		"redhat.vscode-yaml",
-		
-		// General Productivity
 		"streetsidesoftware.code-spell-checker",
 		"gruntfuggly.todo-tree",
 		"aaron-bond.better-comments",
-		
-		// Unreal Engine (if available)
 		"epicgames.unrealengine"
 	]
 }
