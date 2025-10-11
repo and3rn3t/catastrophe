@@ -2,7 +2,7 @@
 
 A 3D open-world adventure game built with **Unreal Engine 5** where you play as a mischievous cat causing havoc in a realistic house environment. Inspired by Untitled Goose Game, but with stunning 3D graphics, realistic physics, and AAA-quality gameplay.
 
-📍 **Check our [Product Roadmap](ROADMAP.md)** to see where we're headed!
+📍 **[Product Roadmap](ROADMAP.md)** | 📖 **[Documentation Index](DOCS_INDEX.md)** | 🚀 **[Quick Start](QUICKSTART.md)**
 
 ## 🎮 Game Features
 
