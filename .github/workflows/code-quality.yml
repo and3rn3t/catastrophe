@@ -139,7 +139,7 @@ jobs:
     
     - name: Spell check changed files
       if: steps.changed-files.outputs.files_changed == 'true'
-      uses: streetsidesoftware/cspell-action@v5
+      uses: streetsidesoftware/cspell-action@v7
       with:
         files: |
           ${{ steps.changed-files.outputs.files }}
