@@ -1,23 +1,46 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Unreal Engine project files
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# C++ source build files
+obj/
+Debug/
+Release/
+x64/
 
-# testing
-/coverage
+# Visual Studio user-specific files
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
 
-# production
-/build
+# Asset files (commented out - usually want to track these)
+# Content/
 
-# misc
+# Config files (keep these)
+# Config/
+
+# Plugin binaries
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# Cache files
+*.log
+*.tlog
+
+# OS specific
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+Thumbs.db
+*.swp
+*~
