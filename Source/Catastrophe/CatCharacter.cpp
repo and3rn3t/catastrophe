@@ -91,6 +91,18 @@ ACatCharacter::ACatCharacter()
 	// Initialize stamina state
 	TimeSinceStaminaUse = 0.0f;
 	bStaminaDepleted = false;
+
+	// Initialize stealth/crouch system
+	CrouchSpeed = 200.0f;                // Move slower while crouched
+	StandingCapsuleHalfHeight = 96.0f;   // Default standing height
+	CrouchCapsuleHalfHeight = 58.0f;     // Crouched height (about 60% of standing)
+	CrouchTransitionSpeed = 10.0f;       // Speed of crouch animation
+	StealthDetectionMultiplier = 0.5f;   // 50% detection range while crouched
+
+	// Initialize stealth state
+	bIsCrouching = false;
+	bWantsToCrouch = false;
+	CurrentCapsuleHalfHeight = StandingCapsuleHalfHeight;
 }
 
 // Called when the game starts or when spawned
@@ -108,6 +120,9 @@ void ACatCharacter::Tick(float DeltaTime)
 
 	// Update stamina system
 	UpdateStamina(DeltaTime);
+
+	// Update crouch system
+	UpdateCrouch(DeltaTime);
 
 	// Update climbing system
 	if (bIsClimbing)
@@ -183,6 +198,9 @@ void ACatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ACatCharacter::StartSprinting);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ACatCharacter::StopSprinting);
 
+	// Bind crouch
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACatCharacter::ToggleCrouch);
+
 	// Bind interact
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACatCharacter::Interact);
 
@@ -242,6 +260,13 @@ void ACatCharacter::MoveRight(float Value)
 
 void ACatCharacter::StartSprinting()
 {
+	// Can't sprint while crouching
+	if (bIsCrouching)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can't sprint while crouching!"));
+		return;
+	}
+
 	// Check if we have enough stamina to sprint
 	if (CurrentStamina < MinStaminaToSprint || bStaminaDepleted)
 	{
@@ -387,6 +412,13 @@ void ACatCharacter::StartClimbing()
 {
 	if (bIsClimbing || !CanClimb())
 	{
+		return;
+	}
+
+	// Can't climb while crouching
+	if (bIsCrouching)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can't climb while crouching! Stand up first."));
 		return;
 	}
 
@@ -645,4 +677,137 @@ void ACatCharacter::ConsumeStamina(float Amount)
 void ACatCharacter::RegenerateStamina(float Amount)
 {
 	CurrentStamina = FMath::Min(MaxStamina, CurrentStamina + Amount);
+}
+
+// ============================================================================
+// Stealth/Crouch System Implementation
+// ============================================================================
+
+void ACatCharacter::ToggleCrouch()
+{
+	if (bIsCrouching)
+	{
+		StopCrouching();
+	}
+	else
+	{
+		StartCrouching();
+	}
+}
+
+void ACatCharacter::StartCrouching()
+{
+	// Can't crouch while climbing or in the air
+	if (bIsClimbing || !GetCharacterMovement()->IsMovingOnGround())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can't crouch while climbing or in the air!"));
+		return;
+	}
+
+	// Can't crouch while sprinting
+	if (bIsSprinting)
+	{
+		StopSprinting();
+	}
+
+	bWantsToCrouch = true;
+	UE_LOG(LogTemp, Log, TEXT("Cat is crouching (stealth mode)"));
+}
+
+void ACatCharacter::StopCrouching()
+{
+	// Check if there's enough room to stand up
+	if (!CanStandUp())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough room to stand up!"));
+		return;
+	}
+
+	bWantsToCrouch = false;
+	UE_LOG(LogTemp, Log, TEXT("Cat is standing up"));
+}
+
+void ACatCharacter::UpdateCrouch(float DeltaTime)
+{
+	// Determine target capsule height
+	float TargetHeight = bWantsToCrouch ? CrouchCapsuleHalfHeight : StandingCapsuleHalfHeight;
+
+	// Smoothly interpolate current height to target
+	if (!FMath::IsNearlyEqual(CurrentCapsuleHalfHeight, TargetHeight, 0.1f))
+	{
+		CurrentCapsuleHalfHeight = FMath::FInterpTo(
+			CurrentCapsuleHalfHeight,
+			TargetHeight,
+			DeltaTime,
+			CrouchTransitionSpeed
+		);
+
+		// Update capsule component
+		GetCapsuleComponent()->SetCapsuleHalfHeight(CurrentCapsuleHalfHeight);
+
+		// Adjust mesh location to keep feet on ground
+		if (GetMesh())
+		{
+			float HeightDifference = StandingCapsuleHalfHeight - CurrentCapsuleHalfHeight;
+			GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -CurrentCapsuleHalfHeight));
+		}
+	}
+
+	// Update crouching state based on actual height
+	bool bWasCrouching = bIsCrouching;
+	bIsCrouching = FMath::IsNearlyEqual(CurrentCapsuleHalfHeight, CrouchCapsuleHalfHeight, 1.0f);
+
+	// Adjust movement speed when crouch state changes
+	if (bIsCrouching != bWasCrouching)
+	{
+		if (bIsCrouching)
+		{
+			// Entered crouch state
+			GetCharacterMovement()->MaxWalkSpeed = CrouchSpeed;
+		}
+		else
+		{
+			// Exited crouch state
+			GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		}
+	}
+}
+
+bool ACatCharacter::CanStandUp() const
+{
+	if (!bIsCrouching)
+	{
+		return true;
+	}
+
+	// Check if there's enough vertical space to stand up
+	FVector StartLocation = GetActorLocation();
+	FVector EndLocation = StartLocation; // Same location for capsule check
+
+	// Calculate the height difference
+	float HeightDifference = StandingCapsuleHalfHeight - CrouchCapsuleHalfHeight;
+
+	// Create a capsule shape for the standing size
+	FCollisionShape StandingCapsule = FCollisionShape::MakeCapsule(
+		GetCapsuleComponent()->GetScaledCapsuleRadius(),
+		StandingCapsuleHalfHeight
+	);
+
+	// Lift the check slightly above current position
+	EndLocation.Z += HeightDifference;
+
+	// Check for obstacles above
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHasSpace = !GetWorld()->SweepTestByChannel(
+		StartLocation,
+		EndLocation,
+		FQuat::Identity,
+		ECC_Pawn,
+		StandingCapsule,
+		QueryParams
+	);
+
+	return bHasSpace;
 }

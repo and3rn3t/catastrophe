@@ -18,14 +18,14 @@
 -   [x] Implement smooth jump mechanics with proper physics
 -   [x] Add climbing system for furniture and curtains
 -   [x] Polish sprint mechanics with stamina system
+-   [x] Add crouching/stealth movement mode
 -   [ ] Create pounce/attack animation and mechanic
--   [ ] Add crouching/stealth movement mode
 -   [ ] Implement tail physics for realistic movement
 -   [ ] Add cat meow/purr sound effects
 
-**Status:** 🚧 In Progress (3/7 Complete)
+**Status:** 🚧 In Progress (4/7 Complete)
 **Blockers:** None
-**Last Updated:** October 11, 2025
+**Last Updated:** October 12, 2025
 
 ---
 
@@ -33,7 +33,7 @@
 
 | Metric          | Current      | Target     |
 | --------------- | ------------ | ---------- |
-| Tasks Completed | 3/7          | 7/7        |
+| Tasks Completed | 4/7          | 7/7        |
 | Code Coverage   | N/A          | -          |
 | Build Status    | ✅ Passing   | ✅ Passing |
 | Open Issues     | Check GitHub | 0          |
@@ -41,6 +41,13 @@
 ---
 
 ## 🔄 Recent Updates
+
+### October 12, 2025
+
+-   ✅ **Implemented Crouch/Stealth System** - Toggle crouch, reduced speed, 50% NPC detection range, overhead obstacle detection
+-   ✅ **Stealth Integration with AI** - NPCs respect stealth multiplier in detection calculations
+-   ✅ **Movement Restrictions** - Proper blocking of sprint/climb while crouched
+-   Created stealth system documentation and testing guide
 
 ### October 11, 2025
 
@@ -56,8 +63,8 @@
 
 ### Next Steps
 
-1. Test climbing system in Unreal Editor
-2. Continue with Milestone 1.1 remaining tasks (stamina, crouch, tail physics, sounds)
+1. Test crouch/stealth system in Unreal Editor
+2. Continue with Milestone 1.1 remaining tasks (pounce, tail physics, sounds)
 3. Add visual polish (animations, VFX, audio)
 4. Set up CI/CD pipeline (optional)
 5. Recruit additional contributors

@@ -21,7 +21,7 @@ AHumanNPC::AHumanNPC()
 void AHumanNPC::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// Find the cat character in the world
 	AActor* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	CatCharacter = Cast<ACatCharacter>(PlayerPawn);
@@ -35,7 +35,7 @@ void AHumanNPC::Tick(float DeltaTime)
 	if (CatCharacter)
 	{
 		bool bCanSee = CanSeeCat();
-		
+
 		if (bCanSee && !bHasDetectedCat)
 		{
 			// Cat is sprinting and in detection cone - catch them!
@@ -55,7 +55,7 @@ void AHumanNPC::Tick(float DeltaTime)
 		// Debug visualization
 		if (bCanSee)
 		{
-			DrawDebugLine(GetWorld(), GetActorLocation(), CatCharacter->GetActorLocation(), 
+			DrawDebugLine(GetWorld(), GetActorLocation(), CatCharacter->GetActorLocation(),
 				FColor::Red, false, -1.0f, 0, 2.0f);
 		}
 	}
@@ -71,10 +71,13 @@ bool AHumanNPC::CanSeeCat()
 	FVector HumanLocation = GetActorLocation();
 	FVector CatLocation = CatCharacter->GetActorLocation();
 	FVector DirectionToCat = (CatLocation - HumanLocation).GetSafeNormal();
-	
+
+	// Apply stealth multiplier to detection radius (crouching reduces detection range)
+	float EffectiveDetectionRadius = DetectionRadius * CatCharacter->GetStealthDetectionMultiplier();
+
 	// Check distance
 	float Distance = FVector::Dist(HumanLocation, CatLocation);
-	if (Distance > DetectionRadius)
+	if (Distance > EffectiveDetectionRadius)
 	{
 		return false;
 	}
@@ -84,7 +87,7 @@ bool AHumanNPC::CanSeeCat()
 	float DotProduct = FVector::DotProduct(ForwardVector, DirectionToCat);
 	float AngleInRadians = FMath::Acos(DotProduct);
 	float AngleInDegrees = FMath::RadiansToDegrees(AngleInRadians);
-	
+
 	if (AngleInDegrees > VisionConeAngle / 2.0f)
 	{
 		return false;
@@ -94,7 +97,7 @@ bool AHumanNPC::CanSeeCat()
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-	
+
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
 		HumanLocation,

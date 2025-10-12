@@ -17,9 +17,29 @@ CATastrophe Documentation
 │  ├─ ROADMAP_VISUAL.md   - Visual timeline and summary
 │  └─ CURRENT_SPRINT.md   - Current sprint/iteration status
 │
+├─ Feature Guides
+│  ├─ MILESTONE_1.1_JUMP_COMPLETE.md  - Jump mechanics documentation
+│  ├─ CLIMBING_SYSTEM_GUIDE.md        - Climbing system guide
+│  ├─ STAMINA_SYSTEM_GUIDE.md         - Stamina management guide
+│  └─ STEALTH_CROUCH_GUIDE.md         - Crouch/stealth system guide
+│
+├─ Testing Guides
+│  ├─ TESTING_JUMP_MECHANICS.md       - Jump system testing
+│  ├─ TESTING_CLIMBING_SYSTEM.md      - Climbing system testing
+│  └─ TESTING_STEALTH_SYSTEM.md       - Stealth system testing
+│
+├─ Change Logs
+│  ├─ CHANGELOG.md                    - Main project changelog
+│  ├─ CHANGELOG_JUMP_MECHANICS.md     - Jump mechanics changelog
+│  ├─ CHANGELOG_CLIMBING_SYSTEM.md    - Climbing system changelog
+│  └─ CHANGELOG_STEALTH_SYSTEM.md     - Stealth system changelog
+│
+├─ Session Summaries
+│  ├─ SESSION_SUMMARY_OCT11_2025.md   - October 11 dev session
+│  └─ SESSION_SUMMARY_OCT12_2025.md   - October 12 dev session
+│
 ├─ Contributing
 │  ├─ CONTRIBUTING.md     - How to contribute to the project
-│  ├─ CHANGELOG.md        - Project change history
 │  ├─ LICENSE             - MIT License
 │  └─ GitHub Templates/   - Issue & PR templates
 │     ├─ PULL_REQUEST_TEMPLATE.md

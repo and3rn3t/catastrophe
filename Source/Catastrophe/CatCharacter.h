@@ -142,6 +142,32 @@ protected:
 	UPROPERTY()
 	float ClimbHeightOnSurface;
 
+	// Stealth/Crouch System
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stealth")
+	float CrouchSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stealth")
+	float CrouchCapsuleHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stealth")
+	float StandingCapsuleHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stealth")
+	float CrouchTransitionSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stealth")
+	float StealthDetectionMultiplier;
+
+	// Stealth state tracking
+	UPROPERTY(BlueprintReadOnly, Category = "Stealth")
+	bool bIsCrouching;
+
+	UPROPERTY()
+	bool bWantsToCrouch;
+
+	UPROPERTY()
+	float CurrentCapsuleHalfHeight;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -154,6 +180,22 @@ public:
 	void MoveRight(float Value);
 	void StartSprinting();
 	void StopSprinting();
+
+	// Stealth/Crouch functions
+	UFUNCTION(BlueprintCallable, Category = "Stealth")
+	void ToggleCrouch();
+
+	UFUNCTION(BlueprintCallable, Category = "Stealth")
+	void StartCrouching();
+
+	UFUNCTION(BlueprintCallable, Category = "Stealth")
+	void StopCrouching();
+
+	UFUNCTION(BlueprintPure, Category = "Stealth")
+	bool IsCrouching() const { return bIsCrouching; }
+
+	UFUNCTION(BlueprintPure, Category = "Stealth")
+	float GetStealthDetectionMultiplier() const { return bIsCrouching ? StealthDetectionMultiplier : 1.0f; }
 
 	// Enhanced Jump functions
 	virtual void Jump() override;
@@ -221,4 +263,8 @@ private:
 
 	// Helper functions for stamina
 	void UpdateStamina(float DeltaTime);
+
+	// Helper functions for crouching
+	void UpdateCrouch(float DeltaTime);
+	bool CanStandUp() const;
 };
