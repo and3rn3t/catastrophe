@@ -77,6 +77,20 @@ ACatCharacter::ACatCharacter()
 	CurrentClimbableSurface = nullptr;
 	ClimbSurfaceNormal = FVector::ZeroVector;
 	ClimbHeightOnSurface = 0.0f;
+
+	// Initialize stamina system
+	MaxStamina = 100.0f;             // Maximum stamina pool
+	CurrentStamina = MaxStamina;     // Start with full stamina
+	StaminaDrainRate = 20.0f;        // Stamina per second while sprinting
+	StaminaRegenRate = 15.0f;        // Stamina per second when regenerating
+	StaminaRegenDelay = 2.0f;        // Delay before stamina starts regenerating
+	ClimbStaminaDrainRate = 10.0f;   // Stamina per second while climbing
+	MinStaminaToSprint = 5.0f;       // Minimum stamina needed to sprint
+	MinStaminaToClimb = 10.0f;       // Minimum stamina needed to climb
+
+	// Initialize stamina state
+	TimeSinceStaminaUse = 0.0f;
+	bStaminaDepleted = false;
 }
 
 // Called when the game starts or when spawned
@@ -91,6 +105,9 @@ void ACatCharacter::BeginPlay()
 void ACatCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Update stamina system
+	UpdateStamina(DeltaTime);
 
 	// Update climbing system
 	if (bIsClimbing)
@@ -225,9 +242,16 @@ void ACatCharacter::MoveRight(float Value)
 
 void ACatCharacter::StartSprinting()
 {
+	// Check if we have enough stamina to sprint
+	if (CurrentStamina < MinStaminaToSprint || bStaminaDepleted)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to sprint!"));
+		return;
+	}
+
 	bIsSprinting = true;
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	UE_LOG(LogTemp, Warning, TEXT("Cat is sprinting! (More risky!)"));
+	UE_LOG(LogTemp, Warning, TEXT("Cat is sprinting!"));
 }
 
 void ACatCharacter::StopSprinting()
@@ -363,6 +387,13 @@ void ACatCharacter::StartClimbing()
 {
 	if (bIsClimbing || !CanClimb())
 	{
+		return;
+	}
+
+	// Check if we have enough stamina to start climbing
+	if (CurrentStamina < MinStaminaToClimb)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to climb!"));
 		return;
 	}
 
@@ -543,4 +574,75 @@ FVector ACatCharacter::GetClimbUpVector() const
 	UpVector.Normalize();
 
 	return UpVector;
+}
+
+// ============================================================================
+// STAMINA SYSTEM IMPLEMENTATION
+// ============================================================================
+
+void ACatCharacter::UpdateStamina(float DeltaTime)
+{
+	bool bIsUsingStamina = false;
+
+	// Drain stamina while sprinting
+	if (bIsSprinting)
+	{
+		ConsumeStamina(StaminaDrainRate * DeltaTime);
+		bIsUsingStamina = true;
+
+		// Force stop sprinting if stamina depleted
+		if (CurrentStamina <= 0.0f)
+		{
+			StopSprinting();
+			bStaminaDepleted = true;
+			UE_LOG(LogTemp, Warning, TEXT("Stamina depleted! Need to rest."));
+		}
+	}
+
+	// Drain stamina while climbing
+	if (bIsClimbing)
+	{
+		ConsumeStamina(ClimbStaminaDrainRate * DeltaTime);
+		bIsUsingStamina = true;
+
+		// Force stop climbing if stamina too low
+		if (CurrentStamina < MinStaminaToClimb)
+		{
+			StopClimbing();
+			UE_LOG(LogTemp, Warning, TEXT("Too tired to keep climbing!"));
+		}
+	}
+
+	// Track time since last stamina use
+	if (bIsUsingStamina)
+	{
+		TimeSinceStaminaUse = 0.0f;
+	}
+	else
+	{
+		TimeSinceStaminaUse += DeltaTime;
+	}
+
+	// Regenerate stamina after delay
+	if (!bIsUsingStamina && TimeSinceStaminaUse >= StaminaRegenDelay)
+	{
+		RegenerateStamina(StaminaRegenRate * DeltaTime);
+
+		// Clear depleted flag once we've recovered some stamina
+		if (bStaminaDepleted && CurrentStamina >= MinStaminaToSprint)
+		{
+			bStaminaDepleted = false;
+			UE_LOG(LogTemp, Log, TEXT("Stamina recovered!"));
+		}
+	}
+}
+
+void ACatCharacter::ConsumeStamina(float Amount)
+{
+	CurrentStamina = FMath::Max(0.0f, CurrentStamina - Amount);
+}
+
+void ACatCharacter::RegenerateStamina(float Amount)
+{
+	CurrentStamina = FMath::Min(MaxStamina, CurrentStamina + Amount);
 }

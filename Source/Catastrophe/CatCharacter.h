@@ -43,6 +43,38 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cat Stats")
 	float WalkSpeed;
 
+	// Stamina System
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float MaxStamina;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float CurrentStamina;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float StaminaDrainRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float StaminaRegenRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float StaminaRegenDelay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float ClimbStaminaDrainRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float MinStaminaToSprint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
+	float MinStaminaToClimb;
+
+	// Stamina state tracking
+	UPROPERTY()
+	float TimeSinceStaminaUse;
+
+	UPROPERTY()
+	bool bStaminaDepleted;
+
 	// Enhanced Jump Mechanics
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
 	float MaxJumpHoldTime;
@@ -143,6 +175,28 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Cat Stats")
 	bool IsSprinting() const { return bIsSprinting; }
 
+	// Stamina functions
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	void ConsumeStamina(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	void RegenerateStamina(float Amount);
+
+	UFUNCTION(BlueprintPure, Category = "Stamina")
+	float GetCurrentStamina() const { return CurrentStamina; }
+
+	UFUNCTION(BlueprintPure, Category = "Stamina")
+	float GetMaxStamina() const { return MaxStamina; }
+
+	UFUNCTION(BlueprintPure, Category = "Stamina")
+	float GetStaminaPercent() const { return MaxStamina > 0 ? CurrentStamina / MaxStamina : 0.0f; }
+
+	UFUNCTION(BlueprintPure, Category = "Stamina")
+	bool HasStamina(float Amount) const { return CurrentStamina >= Amount; }
+
+	UFUNCTION(BlueprintPure, Category = "Stamina")
+	bool IsStaminaDepleted() const { return bStaminaDepleted; }
+
 	// Climbing functions
 	UFUNCTION(BlueprintCallable, Category = "Climbing")
 	void StartClimbing();
@@ -164,4 +218,7 @@ private:
 	void UpdateClimbing(float DeltaTime);
 	void HandleClimbMovement(float DeltaTime);
 	FVector GetClimbUpVector() const;
+
+	// Helper functions for stamina
+	void UpdateStamina(float DeltaTime);
 };
