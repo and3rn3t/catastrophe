@@ -17,6 +17,9 @@ class CATASTROPHE_API ACatastropheGameMode : public AGameModeBase
 public:
 	ACatastropheGameMode();
 
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
 	// Called when the cat is caught
 	UFUNCTION(BlueprintCallable, Category = "Game")
 	void OnCatCaught();
@@ -29,4 +32,12 @@ protected:
 	// Game state
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
 	bool bGameOver;
+
+	// HUD Widget Class
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	// Current HUD Widget Instance
+	UPROPERTY()
+	class UUserWidget* HUDWidgetInstance;
 };

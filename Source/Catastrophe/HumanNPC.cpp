@@ -109,6 +109,9 @@ void AHumanNPC::Tick(float DeltaTime)
 		bHasDetectedCat = true;
 		LastKnownCatPosition = CatCharacter->GetActorLocation();
 		
+		// Notify the cat that it's been detected
+		CatCharacter->SetDetectedByNPC(true);
+		
 		// Increase suspicion based on what cat is doing
 		if (CatCharacter->IsSprinting())
 		{
@@ -129,6 +132,7 @@ void AHumanNPC::Tick(float DeltaTime)
 	else if (!bCanSee && bHasDetectedCat)
 	{
 		bHasDetectedCat = false;
+		CatCharacter->SetDetectedByNPC(false);
 		OnCatEscaped();
 		
 		// Start investigating last known position

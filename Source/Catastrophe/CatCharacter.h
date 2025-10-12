@@ -168,6 +168,9 @@ protected:
 	UPROPERTY()
 	float CurrentCapsuleHalfHeight;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Stealth")
+	bool bIsDetectedByNPC;
+
 	// Pounce/Attack System
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pounce")
 	float PounceForce;
@@ -286,6 +289,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Stealth")
 	float GetStealthDetectionMultiplier() const { return bIsCrouching ? StealthDetectionMultiplier : 1.0f; }
+
+	UFUNCTION(BlueprintPure, Category = "Stealth")
+	bool IsDetectedByNPC() const { return bIsDetectedByNPC; }
+
+	UFUNCTION(BlueprintCallable, Category = "Stealth")
+	void SetDetectedByNPC(bool bDetected) { bIsDetectedByNPC = bDetected; }
 
 	// Enhanced Jump functions
 	virtual void Jump() override;

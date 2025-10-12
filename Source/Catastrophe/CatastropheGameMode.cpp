@@ -4,6 +4,7 @@
 #include "CatCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
 
 ACatastropheGameMode::ACatastropheGameMode()
 {
@@ -15,6 +16,31 @@ ACatastropheGameMode::ACatastropheGameMode()
 	}
 
 	bGameOver = false;
+	HUDWidgetInstance = nullptr;
+}
+
+void ACatastropheGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Create and add HUD widget to viewport
+	if (HUDWidgetClass)
+	{
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PC)
+		{
+			HUDWidgetInstance = CreateWidget<UUserWidget>(PC, HUDWidgetClass);
+			if (HUDWidgetInstance)
+			{
+				HUDWidgetInstance->AddToViewport();
+				UE_LOG(LogTemp, Log, TEXT("HUD Widget created and added to viewport"));
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HUDWidgetClass not set in GameMode!"));
+	}
 }
 
 void ACatastropheGameMode::OnCatCaught()
