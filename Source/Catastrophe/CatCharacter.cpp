@@ -103,6 +103,45 @@ ACatCharacter::ACatCharacter()
 	bIsCrouching = false;
 	bWantsToCrouch = false;
 	CurrentCapsuleHalfHeight = StandingCapsuleHalfHeight;
+
+	// Initialize pounce/attack system
+	PounceForce = 1200.0f;               // Forward launch force for pounce
+	PounceCooldown = 1.5f;               // 1.5 second cooldown between pounces
+	PounceStaminaCost = 15.0f;           // Stamina cost per pounce
+	PounceRange = 200.0f;                // Detection range for pounce targets
+	PounceAirControlMultiplier = 0.8f;   // Extra air control during pounce
+
+	// Initialize pounce state
+	bIsPouncing = false;
+	PounceCooldownTimer = 0.0f;
+	PounceDirection = FVector::ZeroVector;
+
+	// Create tail base component
+	TailBase = CreateDefaultSubobject<USceneComponent>(TEXT("TailBase"));
+	TailBase->SetupAttachment(GetMesh(), TEXT("TailSocket")); // Attach to skeleton tail socket if available
+
+	// Initialize tail physics system
+	TailSegmentCount = 5;                // Number of tail segments
+	TailSegmentLength = 15.0f;           // Length of each tail segment
+	TailStiffness = 0.8f;                // How rigid the tail is (0-1)
+	TailDamping = 0.9f;                  // Velocity damping (0-1)
+	TailGravityScale = 0.3f;             // How much gravity affects the tail
+
+	// Initialize sound system
+	MeowSound = nullptr;                 // Set in Blueprint
+	PurrSound = nullptr;                 // Set in Blueprint
+	HissSound = nullptr;                 // Set in Blueprint
+	LandingSound = nullptr;              // Set in Blueprint
+	PounceSound = nullptr;               // Set in Blueprint
+	MeowCooldown = 3.0f;                 // 3 seconds between meows
+	PurrInterval = 5.0f;                 // Check for purr every 5 seconds
+	PurrChance = 0.3f;                   // 30% chance to purr when idle
+	bCanPlayMeow = true;                 // Can play meow immediately
+
+	// Initialize sound state
+	MeowCooldownTimer = 0.0f;
+	PurrTimer = 0.0f;
+	bIsPurring = false;
 }
 
 // Called when the game starts or when spawned
@@ -111,6 +150,9 @@ void ACatCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("CATastrophe: Cat is ready to cause mischief!"));
+
+	// Initialize tail physics
+	InitializeTail();
 }
 
 // Called every frame
@@ -123,6 +165,15 @@ void ACatCharacter::Tick(float DeltaTime)
 
 	// Update crouch system
 	UpdateCrouch(DeltaTime);
+
+	// Update pounce system
+	UpdatePounce(DeltaTime);
+
+	// Update tail physics
+	UpdateTailPhysics(DeltaTime);
+
+	// Update sound system
+	UpdateSoundSystem(DeltaTime);
 
 	// Update climbing system
 	if (bIsClimbing)
@@ -201,10 +252,15 @@ void ACatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	// Bind crouch
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACatCharacter::ToggleCrouch);
 
+	// Bind pounce (will use a new input action)
+	PlayerInputComponent->BindAction("Pounce", IE_Pressed, this, &ACatCharacter::Pounce);
+
 	// Bind interact
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACatCharacter::Interact);
 
-	// Bind climbing (uses Interact key to start/stop climbing)
+	// Bind meow
+	PlayerInputComponent->BindAction("Meow", IE_Pressed, this, &ACatCharacter::PlayMeow);
+
 	// Climbing is automatic when near climbable surface and moving upward
 }
 
@@ -810,4 +866,440 @@ bool ACatCharacter::CanStandUp() const
 	);
 
 	return bHasSpace;
+}
+
+// ============================================================================
+// POUNCE/ATTACK SYSTEM IMPLEMENTATION
+// ============================================================================
+
+void ACatCharacter::Pounce()
+{
+	if (!CanPounce())
+	{
+		return;
+	}
+
+	// Can't pounce while climbing or crouching
+	if (bIsClimbing || bIsCrouching)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can't pounce while climbing or crouching!"));
+		return;
+	}
+
+	// Consume stamina
+	ConsumeStamina(PounceStaminaCost);
+
+	// Calculate pounce direction
+	FVector ForwardVector = GetActorForwardVector();
+	FVector UpVector = FVector(0, 0, 1);
+
+	// Combine forward and slightly upward for arc trajectory
+	PounceDirection = (ForwardVector * 0.8f + UpVector * 0.4f).GetSafeNormal();
+
+	// Launch character in pounce direction
+	LaunchCharacter(PounceDirection * PounceForce, true, true);
+
+	// Set pouncing state
+	bIsPouncing = true;
+	PounceCooldownTimer = PounceCooldown;
+
+	// Increase air control during pounce
+	float OriginalAirControl = GetCharacterMovement()->AirControl;
+	GetCharacterMovement()->AirControl = OriginalAirControl * PounceAirControlMultiplier;
+
+	// Check for objects in pounce path
+	FVector StartLocation = GetActorLocation();
+	FVector EndLocation = StartLocation + (PounceDirection * PounceRange);
+
+	TArray<FHitResult> HitResults;
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(50.0f);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->SweepMultiByChannel(
+		HitResults,
+		StartLocation,
+		EndLocation,
+		FQuat::Identity,
+		ECC_Visibility,
+		Sphere,
+		QueryParams
+	);
+
+	if (bHit)
+	{
+		for (const FHitResult& Hit : HitResults)
+		{
+			AActor* HitActor = Hit.GetActor();
+			if (HitActor && HitActor->ActorHasTag("Destructible"))
+			{
+				// Apply stronger impulse to pounced objects
+				UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+				if (PrimitiveComp && PrimitiveComp->IsSimulatingPhysics())
+				{
+					FVector ImpulseDirection = (HitActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+					PrimitiveComp->AddImpulse(ImpulseDirection * PounceForce * 1.5f, NAME_None, true);
+				}
+
+				// Award bonus points for pouncing
+				if (HitActor->ActorHasTag("Vase"))
+				{
+					AddMischiefScore(15.0f); // Bonus +5 for pouncing
+				}
+				else if (HitActor->ActorHasTag("Furniture"))
+				{
+					AddMischiefScore(20.0f); // Bonus +5
+				}
+				else if (HitActor->ActorHasTag("Curtain"))
+				{
+					AddMischiefScore(25.0f); // Bonus +5
+				}
+				else if (HitActor->ActorHasTag("Food"))
+				{
+					AddMischiefScore(30.0f); // Bonus +5
+				}
+
+				UE_LOG(LogTemp, Warning, TEXT("Pounced on: %s! Bonus points!"), *HitActor->GetName());
+			}
+		}
+	}
+
+	// Debug visualization
+	DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 0.5f, 0, 3.0f);
+
+	// Play pounce sound
+	PlayPounceSound();
+
+	UE_LOG(LogTemp, Warning, TEXT("Cat pounced!"));
+}
+
+bool ACatCharacter::CanPounce() const
+{
+	// Check cooldown
+	if (PounceCooldownTimer > 0.0f)
+	{
+		return false;
+	}
+
+	// Check stamina
+	if (CurrentStamina < PounceStaminaCost)
+	{
+		return false;
+	}
+
+	// Can't pounce while already pouncing
+	if (bIsPouncing)
+	{
+		return false;
+	}
+
+	// Must be grounded or recently grounded (coyote time)
+	bool bIsGrounded = GetCharacterMovement()->IsMovingOnGround();
+	if (!bIsGrounded && TimeSinceLeftGround > CoyoteTime)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ACatCharacter::UpdatePounce(float DeltaTime)
+{
+	// Update cooldown timer
+	if (PounceCooldownTimer > 0.0f)
+	{
+		PounceCooldownTimer -= DeltaTime;
+		if (PounceCooldownTimer < 0.0f)
+		{
+			PounceCooldownTimer = 0.0f;
+		}
+	}
+
+	// Check if pounce has ended (landed)
+	if (bIsPouncing && GetCharacterMovement()->IsMovingOnGround())
+	{
+		HandlePounceLanding();
+	}
+}
+
+void ACatCharacter::HandlePounceLanding()
+{
+	bIsPouncing = false;
+
+	// Reset air control to normal
+	GetCharacterMovement()->AirControl = ImprovedAirControl;
+
+	// Check for landing on destructible objects
+	FVector StartLocation = GetActorLocation();
+	FVector EndLocation = StartLocation - FVector(0, 0, 100.0f);
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECC_Visibility,
+		QueryParams
+	);
+
+	if (bHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor && HitActor->ActorHasTag("Destructible"))
+		{
+			// Apply downward force on landing
+			UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
+			if (PrimitiveComp && PrimitiveComp->IsSimulatingPhysics())
+			{
+				FVector DownwardForce = FVector(0, 0, -1) * PounceForce * 0.5f;
+				PrimitiveComp->AddImpulseAtLocation(DownwardForce, GetActorLocation(), NAME_None);
+
+				UE_LOG(LogTemp, Warning, TEXT("Landed on %s with impact!"), *HitActor->GetName());
+			}
+		}
+	}
+
+	// Play landing sound
+	PlayLandingSound();
+
+	UE_LOG(LogTemp, Log, TEXT("Pounce landing complete"));
+}
+
+// ============================================================================
+// TAIL PHYSICS SYSTEM IMPLEMENTATION
+// ============================================================================
+
+void ACatCharacter::InitializeTail()
+{
+	// Initialize tail segment positions and velocities
+	TailSegmentPositions.Empty();
+	TailSegmentVelocities.Empty();
+
+	FVector TailStartPosition = TailBase->GetComponentLocation();
+
+	for (int32 i = 0; i < TailSegmentCount; ++i)
+	{
+		// Position segments in a line behind the cat
+		FVector SegmentPosition = TailStartPosition - (GetActorForwardVector() * TailSegmentLength * i);
+		TailSegmentPositions.Add(SegmentPosition);
+		TailSegmentVelocities.Add(FVector::ZeroVector);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Tail physics initialized with %d segments"), TailSegmentCount);
+}
+
+void ACatCharacter::UpdateTailPhysics(float DeltaTime)
+{
+	if (TailSegmentPositions.Num() != TailSegmentCount || TailSegmentVelocities.Num() != TailSegmentCount)
+	{
+		InitializeTail();
+		return;
+	}
+
+	// First segment follows the tail base (attached to character)
+	FVector TailBasePosition = TailBase->GetComponentLocation();
+
+	// Update each segment using Verlet integration
+	for (int32 i = 0; i < TailSegmentCount; ++i)
+	{
+		SimulateTailSegment(i, DeltaTime);
+	}
+
+	// Constraint pass: Enforce segment length constraints (multiple iterations for stability)
+	for (int32 Iteration = 0; Iteration < 3; ++Iteration)
+	{
+		// First segment constrained to tail base
+		FVector Direction = TailSegmentPositions[0] - TailBasePosition;
+		float Distance = Direction.Size();
+
+		if (Distance > 0.001f)
+		{
+			Direction /= Distance;
+			TailSegmentPositions[0] = TailBasePosition + Direction * TailSegmentLength;
+		}
+
+		// Subsequent segments constrained to previous segment
+		for (int32 i = 1; i < TailSegmentCount; ++i)
+		{
+			FVector ToNext = TailSegmentPositions[i] - TailSegmentPositions[i - 1];
+			float SegmentDistance = ToNext.Size();
+
+			if (SegmentDistance > 0.001f)
+			{
+				ToNext /= SegmentDistance;
+
+				// Apply stiffness constraint
+				float Offset = (SegmentDistance - TailSegmentLength) * TailStiffness;
+				TailSegmentPositions[i] = TailSegmentPositions[i] - ToNext * Offset;
+			}
+		}
+	}
+
+	// Notify Blueprint that tail has been updated (for visual representation)
+	OnTailPositionsUpdated();
+}
+
+void ACatCharacter::SimulateTailSegment(int32 SegmentIndex, float DeltaTime)
+{
+	if (SegmentIndex < 0 || SegmentIndex >= TailSegmentPositions.Num())
+	{
+		return;
+	}
+
+	FVector& Position = TailSegmentPositions[SegmentIndex];
+	FVector& Velocity = TailSegmentVelocities[SegmentIndex];
+
+	// Apply gravity
+	FVector Gravity = FVector(0, 0, -980.0f) * TailGravityScale;
+	Velocity += Gravity * DeltaTime;
+
+	// Apply damping
+	Velocity *= TailDamping;
+
+	// Inherit some velocity from character movement (tail follows body)
+	if (SegmentIndex == 0)
+	{
+		FVector CharacterVelocity = GetVelocity();
+		Velocity += CharacterVelocity * 0.1f * DeltaTime; // 10% influence
+	}
+
+	// Apply velocity to position
+	Position += Velocity * DeltaTime;
+}
+
+// ============================================================================
+// SOUND SYSTEM IMPLEMENTATION
+// ============================================================================
+
+void ACatCharacter::PlayMeow()
+{
+	if (!bCanPlayMeow || MeowCooldownTimer > 0.0f)
+	{
+		return;
+	}
+
+	if (MeowSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, MeowSound, GetActorLocation());
+		UE_LOG(LogTemp, Log, TEXT("Cat says: Meow!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MeowSound not set in Blueprint!"));
+	}
+
+	// Start cooldown
+	MeowCooldownTimer = MeowCooldown;
+	bCanPlayMeow = false;
+}
+
+void ACatCharacter::PlayPurr()
+{
+	if (bIsPurring)
+	{
+		return; // Already purring
+	}
+
+	if (PurrSound)
+	{
+		// Play purr sound (should be looping in sound asset)
+		UGameplayStatics::PlaySoundAtLocation(this, PurrSound, GetActorLocation());
+		bIsPurring = true;
+		UE_LOG(LogTemp, Log, TEXT("Cat is purring..."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PurrSound not set in Blueprint!"));
+	}
+}
+
+void ACatCharacter::StopPurr()
+{
+	if (!bIsPurring)
+	{
+		return;
+	}
+
+	bIsPurring = false;
+	UE_LOG(LogTemp, Log, TEXT("Cat stopped purring"));
+}
+
+void ACatCharacter::PlayHiss()
+{
+	if (HissSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HissSound, GetActorLocation());
+		UE_LOG(LogTemp, Log, TEXT("Cat hisses!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HissSound not set in Blueprint!"));
+	}
+}
+
+void ACatCharacter::PlayLandingSound()
+{
+	if (LandingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, LandingSound, GetActorLocation());
+		UE_LOG(LogTemp, Log, TEXT("Cat landed with a thump"));
+	}
+}
+
+void ACatCharacter::PlayPounceSound()
+{
+	if (PounceSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, PounceSound, GetActorLocation());
+		UE_LOG(LogTemp, Log, TEXT("Cat pounce sound!"));
+	}
+}
+
+void ACatCharacter::UpdateSoundSystem(float DeltaTime)
+{
+	// Update meow cooldown
+	if (MeowCooldownTimer > 0.0f)
+	{
+		MeowCooldownTimer -= DeltaTime;
+		if (MeowCooldownTimer <= 0.0f)
+		{
+			MeowCooldownTimer = 0.0f;
+			bCanPlayMeow = true;
+		}
+	}
+
+	// Update purr timer and random purring
+	PurrTimer += DeltaTime;
+	if (PurrTimer >= PurrInterval)
+	{
+		PurrTimer = 0.0f;
+		TryPlayRandomPurr();
+	}
+}
+
+void ACatCharacter::TryPlayRandomPurr()
+{
+	// Only purr if idle (not moving much, not jumping, not climbing)
+	bool bIsIdle = GetVelocity().Size() < 50.0f &&
+	               GetCharacterMovement()->IsMovingOnGround() &&
+	               !bIsClimbing &&
+	               !bIsPouncing;
+
+	if (bIsIdle && !bIsPurring)
+	{
+		// Random chance to start purring
+		float RandomValue = FMath::FRand();
+		if (RandomValue < PurrChance)
+		{
+			PlayPurr();
+		}
+	}
+	else if (!bIsIdle && bIsPurring)
+	{
+		// Stop purring if no longer idle
+		StopPurr();
+	}
 }

@@ -168,6 +168,96 @@ protected:
 	UPROPERTY()
 	float CurrentCapsuleHalfHeight;
 
+	// Pounce/Attack System
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pounce")
+	float PounceForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pounce")
+	float PounceCooldown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pounce")
+	float PounceStaminaCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pounce")
+	float PounceRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pounce")
+	float PounceAirControlMultiplier;
+
+	// Pounce state tracking
+	UPROPERTY(BlueprintReadOnly, Category = "Pounce")
+	bool bIsPouncing;
+
+	UPROPERTY()
+	float PounceCooldownTimer;
+
+	UPROPERTY()
+	FVector PounceDirection;
+
+	// Tail Physics System
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tail", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* TailBase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tail")
+	int32 TailSegmentCount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tail")
+	float TailSegmentLength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tail")
+	float TailStiffness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tail")
+	float TailDamping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tail")
+	float TailGravityScale;
+
+	// Tail segment tracking
+	UPROPERTY()
+	TArray<FVector> TailSegmentPositions;
+
+	UPROPERTY()
+	TArray<FVector> TailSegmentVelocities;
+
+	// Sound System
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundBase* MeowSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundBase* PurrSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundBase* HissSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundBase* LandingSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundBase* PounceSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float MeowCooldown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float PurrInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float PurrChance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	bool bCanPlayMeow;
+
+	// Sound state tracking
+	UPROPERTY()
+	float MeowCooldownTimer;
+
+	UPROPERTY()
+	float PurrTimer;
+
+	UPROPERTY()
+	bool bIsPurring;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -255,6 +345,48 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Climbing")
 	bool IsClimbing() const { return bIsClimbing; }
 
+	// Pounce/Attack functions
+	UFUNCTION(BlueprintCallable, Category = "Pounce")
+	void Pounce();
+
+	UFUNCTION(BlueprintCallable, Category = "Pounce")
+	bool CanPounce() const;
+
+	UFUNCTION(BlueprintPure, Category = "Pounce")
+	bool IsPouncing() const { return bIsPouncing; }
+
+	UFUNCTION(BlueprintPure, Category = "Pounce")
+	float GetPounceCooldownPercent() const { return PounceCooldown > 0 ? PounceCooldownTimer / PounceCooldown : 1.0f; }
+
+	// Tail Physics (Blueprint events for animation)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Tail")
+	void OnTailPositionsUpdated();
+
+	UFUNCTION(BlueprintPure, Category = "Tail")
+	TArray<FVector> GetTailSegmentPositions() const { return TailSegmentPositions; }
+
+	// Sound functions
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void PlayMeow();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void PlayPurr();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void StopPurr();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void PlayHiss();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void PlayLandingSound();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void PlayPounceSound();
+
+	UFUNCTION(BlueprintPure, Category = "Sound")
+	bool IsPurring() const { return bIsPurring; }
+
 private:
 	// Helper functions for climbing
 	void UpdateClimbing(float DeltaTime);
@@ -267,4 +399,17 @@ private:
 	// Helper functions for crouching
 	void UpdateCrouch(float DeltaTime);
 	bool CanStandUp() const;
+
+	// Helper functions for pounce
+	void UpdatePounce(float DeltaTime);
+	void HandlePounceLanding();
+
+	// Helper functions for tail physics
+	void InitializeTail();
+	void UpdateTailPhysics(float DeltaTime);
+	void SimulateTailSegment(int32 SegmentIndex, float DeltaTime);
+
+	// Helper functions for sound system
+	void UpdateSoundSystem(float DeltaTime);
+	void TryPlayRandomPurr();
 };
