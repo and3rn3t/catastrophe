@@ -7,6 +7,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "HumanNPC.h"
 
 // Sets default values
 ACatCharacter::ACatCharacter()
@@ -375,12 +377,15 @@ void ACatCharacter::Interact()
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Cat knocked over: %s"), *HitActor->GetName());
 
-					// Add physics impulse to knock it over
+					// Apply physics impulse to knock it over
 					UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 					if (PrimitiveComp && PrimitiveComp->IsSimulatingPhysics())
 					{
 						FVector ImpulseDirection = (HitActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 						PrimitiveComp->AddImpulse(ImpulseDirection * 500.0f, NAME_None, true);
+						
+						// Emit noise when knocking things over
+						EmitNoise(40.0f); // Moderate noise
 					}
 
 					// Award points based on the tag
@@ -1185,6 +1190,9 @@ void ACatCharacter::PlayMeow()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, MeowSound, GetActorLocation());
 		UE_LOG(LogTemp, Log, TEXT("Cat says: Meow!"));
+		
+		// Emit noise for nearby NPCs to hear
+		EmitNoise(50.0f); // Medium loudness
 	}
 	else
 	{
@@ -1233,6 +1241,9 @@ void ACatCharacter::PlayHiss()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, HissSound, GetActorLocation());
 		UE_LOG(LogTemp, Log, TEXT("Cat hisses!"));
+		
+		// Emit loud noise
+		EmitNoise(80.0f); // Very loud
 	}
 	else
 	{
@@ -1246,6 +1257,11 @@ void ACatCharacter::PlayLandingSound()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, LandingSound, GetActorLocation());
 		UE_LOG(LogTemp, Log, TEXT("Cat landed with a thump"));
+		
+		// Emit noise based on fall velocity
+		float LandingVelocity = FMath::Abs(GetVelocity().Z);
+		float Loudness = FMath::Clamp(LandingVelocity / 10.0f, 10.0f, 60.0f);
+		EmitNoise(Loudness);
 	}
 }
 
@@ -1255,7 +1271,35 @@ void ACatCharacter::PlayPounceSound()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, PounceSound, GetActorLocation());
 		UE_LOG(LogTemp, Log, TEXT("Cat pounce sound!"));
+		
+		// Emit loud noise
+		EmitNoise(70.0f); // Loud
 	}
+}
+
+void ACatCharacter::EmitNoise(float Loudness)
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	// Find all Human NPCs in range and notify them
+	TArray<AActor*> FoundNPCs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHumanNPC::StaticClass(), FoundNPCs);
+
+	FVector NoiseLocation = GetActorLocation();
+
+	for (AActor* Actor : FoundNPCs)
+	{
+		AHumanNPC* NPC = Cast<AHumanNPC>(Actor);
+		if (NPC)
+		{
+			NPC->OnNoiseHeard(NoiseLocation, Loudness, this);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Cat emitted noise (Loudness: %.1f) at location %s"), Loudness, *NoiseLocation.ToString());
 }
 
 void ACatCharacter::UpdateSoundSystem(float DeltaTime)

@@ -387,6 +387,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Sound")
 	bool IsPurring() const { return bIsPurring; }
 
+	// Noise emission for AI detection
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void EmitNoise(float Loudness);
+
 private:
 	// Helper functions for climbing
 	void UpdateClimbing(float DeltaTime);

@@ -29,23 +29,25 @@ Build CATastrophe into a polished, feature-rich 3D mischief simulator that deliv
 
 ### Milestone 1.1: Enhanced Cat Mechanics
 **Target: Month 1, Week 1-2**
-- [ ] Implement smooth jump mechanics with proper physics
-- [ ] Add climbing system for furniture and curtains
-- [ ] Create pounce/attack animation and mechanic
-- [ ] Add crouching/stealth movement mode
-- [ ] Implement tail physics for realistic movement
-- [ ] Polish sprint mechanics with stamina system
-- [ ] Add cat meow/purr sound effects
+- [x] Implement smooth jump mechanics with proper physics
+- [x] Add climbing system for furniture and curtains
+- [x] Create pounce/attack animation and mechanic
+- [x] Add crouching/stealth movement mode
+- [x] Implement tail physics for realistic movement
+- [x] Polish sprint mechanics with stamina system
+- [x] Add cat meow/purr sound effects
 
 ### Milestone 1.2: Improved AI & Stealth
 **Target: Month 1, Week 3-4**
-- [ ] Enhance human NPC AI with behavior trees
-- [ ] Implement hearing system (NPCs react to noise)
-- [ ] Add investigation behavior (check last known position)
-- [ ] Create alert states (relaxed, suspicious, alerted)
-- [ ] Add patrol waypoint system
-- [ ] Implement vision cone visualization toggle
-- [ ] Add difficulty scaling for NPC detection
+- [x] Enhance human NPC AI with behavior trees
+- [x] Implement hearing system (NPCs react to noise)
+- [x] Add investigation behavior (check last known position)
+- [x] Create alert states (relaxed, suspicious, alerted)
+- [x] Add patrol waypoint system
+- [x] Implement vision cone visualization toggle
+- [x] Add difficulty scaling for NPC detection
+
+**Testing Coverage:** ✅ 13 automated tests, 60% coverage, all passing
 
 ### Milestone 1.3: UI/UX Foundation
 **Target: Month 2, Week 1-2**
