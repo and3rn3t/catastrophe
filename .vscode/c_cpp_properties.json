@@ -1,0 +1,28 @@
+{
+	"configurations": [
+		{
+			"name": "Win64",
+			"includePath": [
+				"${workspaceFolder}/**",
+				"${workspaceFolder}/Source/**",
+				"${env:UE5_DIR}/Engine/Source/**",
+				"${env:UE5_DIR}/Engine/Plugins/**"
+			],
+			"defines": [
+				"_DEBUG",
+				"UNICODE",
+				"_UNICODE",
+				"WITH_EDITOR=1",
+				"UE_BUILD_DEVELOPMENT=1"
+			],
+			"windowsSdkVersion": "10.0.22621.0",
+			"compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.39.33519/bin/Hostx64/x64/cl.exe",
+			"cStandard": "c17",
+			"cppStandard": "c++17",
+			"intelliSenseMode": "msvc-x64",
+			"compileCommands": "${workspaceFolder}/compile_commands.json",
+			"configurationProvider": "ms-vscode.cpptools"
+		}
+	],
+	"version": 4
+}

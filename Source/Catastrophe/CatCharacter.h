@@ -43,7 +43,74 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cat Stats")
 	float WalkSpeed;
 
-public:	
+	// Enhanced Jump Mechanics
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float MaxJumpHoldTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float MinJumpVelocity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float MaxJumpVelocity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float CoyoteTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float JumpBufferTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float ImprovedAirControl;
+
+	// Jump state tracking
+	UPROPERTY()
+	bool bJumpHeld;
+
+	UPROPERTY()
+	float JumpHoldTime;
+
+	UPROPERTY()
+	float TimeSinceLeftGround;
+
+	UPROPERTY()
+	float JumpBufferTimer;
+
+	UPROPERTY()
+	bool bWasGroundedLastFrame;
+
+	// Climbing System
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Climbing")
+	float ClimbSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Climbing")
+	float ClimbDetectionRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Climbing")
+	float ClimbCapsuleHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Climbing")
+	float ClimbCapsuleRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Climbing")
+	bool bCanClimbJump;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Climbing")
+	float ClimbJumpVelocity;
+
+	// Climbing state tracking
+	UPROPERTY(BlueprintReadOnly, Category = "Climbing")
+	bool bIsClimbing;
+
+	UPROPERTY()
+	AActor* CurrentClimbableSurface;
+
+	UPROPERTY()
+	FVector ClimbSurfaceNormal;
+
+	UPROPERTY()
+	float ClimbHeightOnSurface;
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -55,6 +122,10 @@ public:
 	void MoveRight(float Value);
 	void StartSprinting();
 	void StopSprinting();
+
+	// Enhanced Jump functions
+	virtual void Jump() override;
+	virtual void StopJumping() override;
 
 	// Interaction function
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
@@ -71,4 +142,26 @@ public:
 	// Check if sprinting
 	UFUNCTION(BlueprintPure, Category = "Cat Stats")
 	bool IsSprinting() const { return bIsSprinting; }
+
+	// Climbing functions
+	UFUNCTION(BlueprintCallable, Category = "Climbing")
+	void StartClimbing();
+
+	UFUNCTION(BlueprintCallable, Category = "Climbing")
+	void StopClimbing();
+
+	UFUNCTION(BlueprintCallable, Category = "Climbing")
+	bool CanClimb();
+
+	UFUNCTION(BlueprintCallable, Category = "Climbing")
+	AActor* DetectClimbableSurface();
+
+	UFUNCTION(BlueprintPure, Category = "Climbing")
+	bool IsClimbing() const { return bIsClimbing; }
+
+private:
+	// Helper functions for climbing
+	void UpdateClimbing(float DeltaTime);
+	void HandleClimbMovement(float DeltaTime);
+	FVector GetClimbUpVector() const;
 };

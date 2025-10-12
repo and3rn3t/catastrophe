@@ -45,13 +45,45 @@ ACatCharacter::ACatCharacter()
 	WalkSpeed = 400.0f;
 	SprintSpeed = 800.0f;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+
+	// Initialize enhanced jump mechanics
+	MaxJumpHoldTime = 0.3f;          // Can hold jump for 300ms
+	MinJumpVelocity = 400.0f;        // Minimum jump height (tap)
+	MaxJumpVelocity = 800.0f;        // Maximum jump height (hold)
+	CoyoteTime = 0.15f;              // 150ms grace period after leaving edge
+	JumpBufferTime = 0.1f;           // 100ms jump input buffering
+	ImprovedAirControl = 0.5f;       // Better mid-air control
+
+	// Initialize jump state
+	bJumpHeld = false;
+	JumpHoldTime = 0.0f;
+	TimeSinceLeftGround = 0.0f;
+	JumpBufferTimer = 0.0f;
+	bWasGroundedLastFrame = true;
+
+	// Apply improved air control
+	GetCharacterMovement()->AirControl = ImprovedAirControl;
+
+	// Initialize climbing system
+	ClimbSpeed = 300.0f;             // Vertical climb speed
+	ClimbDetectionRadius = 100.0f;   // How far to check for climbable surfaces
+	ClimbCapsuleHeight = 96.0f;      // Capsule height while climbing
+	ClimbCapsuleRadius = 42.0f;      // Capsule radius while climbing
+	bCanClimbJump = true;            // Allow jumping off walls
+	ClimbJumpVelocity = 500.0f;      // Jump power when leaving climb
+
+	// Initialize climb state
+	bIsClimbing = false;
+	CurrentClimbableSurface = nullptr;
+	ClimbSurfaceNormal = FVector::ZeroVector;
+	ClimbHeightOnSurface = 0.0f;
 }
 
 // Called when the game starts or when spawned
 void ACatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("CATastrophe: Cat is ready to cause mischief!"));
 }
 
@@ -59,6 +91,58 @@ void ACatCharacter::BeginPlay()
 void ACatCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Update climbing system
+	if (bIsClimbing)
+	{
+		UpdateClimbing(DeltaTime);
+	}
+
+	bool bIsGrounded = GetCharacterMovement()->IsMovingOnGround();
+
+	// Track time since leaving ground for coyote time
+	if (!bIsGrounded && bWasGroundedLastFrame)
+	{
+		TimeSinceLeftGround = 0.0f;
+	}
+
+	if (!bIsGrounded)
+	{
+		TimeSinceLeftGround += DeltaTime;
+	}
+
+	// Handle variable jump height (hold for higher jump)
+	if (bJumpHeld && !bIsGrounded && JumpHoldTime < MaxJumpHoldTime)
+	{
+		JumpHoldTime += DeltaTime;
+
+		// Gradually increase jump velocity while holding
+		float JumpProgress = FMath::Clamp(JumpHoldTime / MaxJumpHoldTime, 0.0f, 1.0f);
+		float TargetVelocity = FMath::Lerp(MinJumpVelocity, MaxJumpVelocity, JumpProgress);
+
+		// Only add upward velocity if we're still ascending
+		if (GetVelocity().Z > 0)
+		{
+			FVector NewVelocity = GetVelocity();
+			NewVelocity.Z = TargetVelocity;
+			GetCharacterMovement()->Velocity = NewVelocity;
+		}
+	}
+
+	// Handle jump buffering (pressing jump slightly before landing)
+	if (JumpBufferTimer > 0.0f)
+	{
+		JumpBufferTimer -= DeltaTime;
+
+		// If we just landed and have a buffered jump input, execute it
+		if (bIsGrounded && !bWasGroundedLastFrame)
+		{
+			Jump();
+			JumpBufferTimer = 0.0f;
+		}
+	}
+
+	bWasGroundedLastFrame = bIsGrounded;
 }
 
 // Called to bind functionality to input
@@ -75,8 +159,8 @@ void ACatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	// Bind jump
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACatCharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACatCharacter::StopJumping);
 
 	// Bind sprint
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ACatCharacter::StartSprinting);
@@ -84,19 +168,34 @@ void ACatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	// Bind interact
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACatCharacter::Interact);
+
+	// Bind climbing (uses Interact key to start/stop climbing)
+	// Climbing is automatic when near climbable surface and moving upward
 }
 
 void ACatCharacter::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
-		// Find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		if (bIsClimbing)
+		{
+			// While climbing, forward/backward controls vertical movement
+			HandleClimbMovement(Value);
+		}
+		else
+		{
+			// Normal ground movement
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			AddMovementInput(Direction, Value);
 
-		// Get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+			// Auto-start climbing if moving forward into a climbable surface
+			if (Value > 0.0f && CanClimb())
+			{
+				StartClimbing();
+			}
+		}
 	}
 }
 
@@ -104,13 +203,23 @@ void ACatCharacter::MoveRight(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
-		// Find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		if (bIsClimbing)
+		{
+			// While climbing, left/right strafes along the wall
+			FVector RightVector = FVector::CrossProduct(GetClimbUpVector(), ClimbSurfaceNormal);
+			RightVector.Normalize();
 
-		// Get right vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		AddMovementInput(Direction, Value);
+			FVector NewLocation = GetActorLocation() + (RightVector * Value * ClimbSpeed * GetWorld()->GetDeltaSeconds());
+			SetActorLocation(NewLocation, true);
+		}
+		else
+		{
+			// Normal ground movement
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			AddMovementInput(Direction, Value);
+		}
 	}
 }
 
@@ -160,7 +269,7 @@ void ACatCharacter::Interact()
 				if (HitActor->ActorHasTag("Destructible"))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Cat knocked over: %s"), *HitActor->GetName());
-					
+
 					// Add physics impulse to knock it over
 					UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(HitActor->GetRootComponent());
 					if (PrimitiveComp && PrimitiveComp->IsSimulatingPhysics())
@@ -200,4 +309,238 @@ void ACatCharacter::AddMischiefScore(float Points)
 {
 	MischiefScore += Points;
 	UE_LOG(LogTemp, Warning, TEXT("Mischief Score: %.0f (+%.0f)"), MischiefScore, Points);
+}
+
+void ACatCharacter::Jump()
+{
+	bool bIsGrounded = GetCharacterMovement()->IsMovingOnGround();
+
+	// Coyote time: Allow jump for brief period after leaving ground
+	bool bCanCoyoteJump = !bIsGrounded && TimeSinceLeftGround < CoyoteTime;
+
+	if (bIsGrounded || bCanCoyoteJump)
+	{
+		// Execute jump with minimum velocity
+		Super::Jump();
+
+		bJumpHeld = true;
+		JumpHoldTime = 0.0f;
+
+		// Set initial jump velocity to minimum
+		FVector NewVelocity = GetVelocity();
+		NewVelocity.Z = MinJumpVelocity;
+		GetCharacterMovement()->Velocity = NewVelocity;
+
+		UE_LOG(LogTemp, Log, TEXT("Cat jumped! (Hold for higher jump)"));
+	}
+	else
+	{
+		// Buffer the jump input for landing
+		JumpBufferTimer = JumpBufferTime;
+		UE_LOG(LogTemp, Log, TEXT("Jump buffered - will execute on landing"));
+	}
+}
+
+void ACatCharacter::StopJumping()
+{
+	Super::StopJumping();
+	bJumpHeld = false;
+
+	// Cut vertical velocity when releasing jump early for tighter control
+	if (GetVelocity().Z > 0)
+	{
+		FVector NewVelocity = GetVelocity();
+		NewVelocity.Z *= 0.5f; // Cut jump short
+		GetCharacterMovement()->Velocity = NewVelocity;
+	}
+}
+
+// ============================================================================
+// CLIMBING SYSTEM IMPLEMENTATION
+// ============================================================================
+
+void ACatCharacter::StartClimbing()
+{
+	if (bIsClimbing || !CanClimb())
+	{
+		return;
+	}
+
+	AActor* ClimbableSurface = DetectClimbableSurface();
+	if (!ClimbableSurface)
+	{
+		return;
+	}
+
+	bIsClimbing = true;
+	CurrentClimbableSurface = ClimbableSurface;
+
+	// Disable gravity and switch to flying movement mode
+	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	GetCharacterMovement()->GravityScale = 0.0f;
+
+	// Orient character to face away from the wall
+	FRotator NewRotation = (-ClimbSurfaceNormal).Rotation();
+	SetActorRotation(NewRotation);
+
+	// Track starting height
+	ClimbHeightOnSurface = GetActorLocation().Z;
+
+	UE_LOG(LogTemp, Warning, TEXT("Started climbing!"));
+}
+
+void ACatCharacter::StopClimbing()
+{
+	if (!bIsClimbing)
+	{
+		return;
+	}
+
+	bIsClimbing = false;
+	CurrentClimbableSurface = nullptr;
+
+	// Re-enable gravity and return to walking mode
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	GetCharacterMovement()->GravityScale = 1.0f;
+
+	UE_LOG(LogTemp, Warning, TEXT("Stopped climbing"));
+}
+
+bool ACatCharacter::CanClimb()
+{
+	// Can't climb if already climbing or in air
+	if (bIsClimbing)
+	{
+		return false;
+	}
+
+	// Check if there's a climbable surface nearby
+	return (DetectClimbableSurface() != nullptr);
+}
+
+AActor* ACatCharacter::DetectClimbableSurface()
+{
+	FVector StartLocation = GetActorLocation();
+	FVector ForwardVector = GetActorForwardVector();
+	FVector EndLocation = StartLocation + (ForwardVector * ClimbDetectionRadius);
+
+	// Perform sphere trace to find climbable surfaces
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		FQuat::Identity,
+		ECC_Visibility,
+		FCollisionShape::MakeSphere(30.0f),
+		QueryParams
+	);
+
+	if (bHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+
+		// Check if the hit actor is tagged as "Climbable"
+		if (HitActor && HitActor->ActorHasTag("Climbable"))
+		{
+			// Store the surface normal for later use
+			ClimbSurfaceNormal = HitResult.ImpactNormal;
+
+			// Debug visualization
+			DrawDebugLine(GetWorld(), StartLocation, HitResult.Location, FColor::Cyan, false, 0.1f, 0, 2.0f);
+
+			return HitActor;
+		}
+	}
+
+	return nullptr;
+}
+
+void ACatCharacter::UpdateClimbing(float DeltaTime)
+{
+	if (!bIsClimbing)
+	{
+		return;
+	}
+
+	// Check if we're still near a climbable surface
+	AActor* ClimbableSurface = DetectClimbableSurface();
+	if (!ClimbableSurface)
+	{
+		// Lost contact with surface, stop climbing
+		StopClimbing();
+		return;
+	}
+
+	// Update the surface normal
+	CurrentClimbableSurface = ClimbableSurface;
+
+	// Keep character oriented to face away from wall
+	FRotator TargetRotation = (-ClimbSurfaceNormal).Rotation();
+	FRotator NewRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 10.0f);
+	SetActorRotation(NewRotation);
+
+	// Handle jump off wall
+	if (bCanClimbJump && GetInputAxisValue("Jump") > 0.0f)
+	{
+		// Jump away from the wall
+		StopClimbing();
+
+		FVector JumpDirection = ClimbSurfaceNormal + FVector(0, 0, 0.5f); // Slightly upward
+		JumpDirection.Normalize();
+
+		LaunchCharacter(JumpDirection * ClimbJumpVelocity, true, true);
+
+		UE_LOG(LogTemp, Warning, TEXT("Jumped off wall!"));
+	}
+
+	// Auto-dismount if moving backward (away from wall)
+	float BackwardInput = GetInputAxisValue("MoveForward");
+	if (BackwardInput < -0.5f)
+	{
+		StopClimbing();
+	}
+}
+
+void ACatCharacter::HandleClimbMovement(float Value)
+{
+	if (!bIsClimbing)
+	{
+		return;
+	}
+
+	// Move up/down along the surface
+	FVector UpVector = GetClimbUpVector();
+	FVector NewLocation = GetActorLocation() + (UpVector * Value * ClimbSpeed * GetWorld()->GetDeltaSeconds());
+
+	// Apply the movement with collision
+	FHitResult HitResult;
+	SetActorLocation(NewLocation, true, &HitResult);
+
+	// Update height tracking
+	ClimbHeightOnSurface = NewLocation.Z;
+
+	// If we hit something above us (ceiling/top of object), stop climbing
+	if (HitResult.bBlockingHit && Value > 0.0f)
+	{
+		// Reached top - dismount with a little boost
+		StopClimbing();
+		LaunchCharacter(FVector(0, 0, 200.0f), false, false);
+		UE_LOG(LogTemp, Warning, TEXT("Reached top of climbable surface!"));
+	}
+}
+
+FVector ACatCharacter::GetClimbUpVector() const
+{
+	// Calculate the "up" direction relative to the wall
+	// This is perpendicular to both the surface normal and world right
+	FVector WorldUp = FVector(0, 0, 1);
+	FVector RightVector = FVector::CrossProduct(WorldUp, ClimbSurfaceNormal);
+	FVector UpVector = FVector::CrossProduct(ClimbSurfaceNormal, RightVector);
+	UpVector.Normalize();
+
+	return UpVector;
 }

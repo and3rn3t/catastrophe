@@ -4,13 +4,21 @@
 		{
 			"label": "Build Catastrophe (Development Editor)",
 			"type": "shell",
-			"command": "msbuild",
-			"args": [
-				"Catastrophe.sln",
-				"/p:Configuration=\"Development Editor\"",
-				"/p:Platform=Win64",
-				"/m"
-			],
+			"windows": {
+				"command": "C:/Program Files/Epic Games/UE_5.6/Engine/Build/BatchFiles/Build.bat",
+				"args": [
+					"CatastropheEditor",
+					"Win64",
+					"Development",
+					"${workspaceFolder}\\Catastrophe.uproject",
+					"-WaitMutex",
+					"-FromMsBuild"
+				]
+			},
+			"linux": {
+				"command": "make",
+				"args": ["CatastropheEditor"]
+			},
 			"group": {
 				"kind": "build",
 				"isDefault": true
@@ -29,18 +37,21 @@
 		{
 			"label": "Clean Catastrophe",
 			"type": "shell",
-			"command": "msbuild",
-			"args": [
-				"Catastrophe.sln",
-				"/t:Clean"
-			],
+			"windows": {
+				"command": "&'C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe'",
+				"args": ["Catastrophe.sln", "/t:Clean", "/v:minimal"]
+			},
+			"linux": {
+				"command": "make",
+				"args": ["clean"]
+			},
 			"problemMatcher": "$msCompile"
 		},
 		{
 			"label": "Generate Project Files",
 			"type": "shell",
 			"windows": {
-				"command": "${env:UE5_DIR}\\Engine\\Build\\BatchFiles\\Build.bat",
+				"command": "C:/Program Files/Epic Games/UE_5.6/Engine/Build/BatchFiles/Build.bat",
 				"args": [
 					"-projectfiles",
 					"-project=\"${workspaceFolder}\\Catastrophe.uproject\"",
