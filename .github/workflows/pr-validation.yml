@@ -38,8 +38,9 @@ jobs:
         find . -type f -size +10M | grep -v ".git" || true
         
     - name: Check branch naming
+      env:
+        BRANCH_NAME: ${{ github.head_ref }}
       run: |
-        BRANCH_NAME="${{ github.head_ref }}"
         if [[ ! "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|docs|refactor|test)/.+ ]]; then
           echo "::warning::Branch name '$BRANCH_NAME' doesn't follow convention: feature/, bugfix/, hotfix/, docs/, refactor/, or test/"
         fi
